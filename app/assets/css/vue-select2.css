@@ -1,0 +1,15 @@
+.vs__dropdown-option {
+  padding: 3px 10px;
+}
+.vs__selected {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.vs__selected-options {
+  flex-wrap: nowrap;
+  max-width: calc(100% - 25px);
+}

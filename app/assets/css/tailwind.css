@@ -1,0 +1,146 @@
+/* purgecss start ignore */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+/* purgecss end ignore */
+@import 'tailwindcss/utilities';
+
+/*external libraries*/
+@import 'vue3-timepicker/dist/VueTimepicker.css';
+@import 'vue-select/dist/vue-select.css';
+@import 'vue-cal/dist/vuecal.css';
+@import 'vue-good-table-next/dist/vue-good-table-next.css';
+@import 'vue-datepicker-next/index.css';
+
+@import "./vue-select2.css";
+@import "./scrollbar.css";
+@import "./custom-inputs.css";
+@import "./transitions.css";
+@import "./customer-colors.css";
+@import "./vue-good-table.css";
+@import "./vue-tooltip.css";
+
+body {
+  background-color: #F8FAFB;
+}
+/*Custom classes*/
+
+/*margins*/
+.page-margins {
+  margin: 0 auto;
+}
+/*width*/
+.w-col-sm {
+  width: 37%;
+}
+
+.w-col-lg {
+  width: 63%
+}
+
+.w-1-8 {
+  width: 12.5%;
+}
+
+.w-7-8 {
+  width: 87.5%;
+}
+@media (min-width: 1440px) {
+  .page-width {
+    width: 1440px;
+  }
+}
+@media (max-width: 1339px) {
+  .page-width {
+    width: 1280px;
+  }
+}
+
+/*height*/
+.h-81 {
+  height: 81%;
+}
+
+.h-90 {
+  height: 90%;
+}
+.h-activity-body {
+  max-height: calc(100vh - 65px);
+}
+
+/*position*/
+.top-10 {
+  top: 10px;
+}
+
+.top-5 {
+  top: 5px;
+}
+
+.top-7 {
+  top: 7px;
+}
+.top-18 {
+  top: 18px;
+}
+
+.bottom-10 {
+  bottom: 10px;
+}
+.bottom-15 {
+  bottom: 15px;
+}
+.bottom-20 {
+  bottom: 20px;
+}
+
+.right-5 {
+  right: 5px;
+}
+.right-7 {
+  right: 7px;
+}
+.right-10 {
+  right: 10px;
+}
+
+/*utilities*/
+.modal-active {
+  overflow-x: hidden;
+  overflow-y: visible !important;
+}
+
+.error {
+  font-weight: 600;
+  color: red;
+  font-size: 14px;
+}
+.unselectable {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/*plugins*/
+.vuecal__event-time {
+  display: none;
+}
+
+.vuecal__now-line {
+  display: none
+}
+/*other*/
+.dt-picker-size {
+  height: 66px;
+  width: 43px;
+}
+.active-menu {
+  border-radius: 100px;
+  background-color: #F4FDF6;
+  color: #6A7E90;
+  font-weight: 500;
+  padding: 2px 18px;
+}
+

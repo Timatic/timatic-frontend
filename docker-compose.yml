@@ -1,0 +1,12 @@
+---
+services:
+  nginx:
+    build:
+      context: './'
+      target: nginx
+    image: "timatic-frontend-nginx:${APP_VERSION}"
+    ports:
+      - ${NGINX_PORT:-8080}:80
+    volumes:
+      - ./dist:/usr/share/nginx/html:ro
+    restart: unless-stopped

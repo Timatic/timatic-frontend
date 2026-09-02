@@ -1,0 +1,16 @@
+.tooltip {
+  z-index: 10000;
+}
+
+.tooltip .tooltip-inner {
+  background-color: #253749;
+  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+  color: white;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.tooltip:focus {
+  outline: none;
+}

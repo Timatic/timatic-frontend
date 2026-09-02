@@ -1,0 +1,68 @@
+.vgt-wrap .vgt-inner-wrap {
+  box-shadow: none;
+}
+
+#vgt-table {
+  border: none !important;
+}
+
+#vgt-table > thead > tr > th {
+  background: none;
+  border: none;
+}
+
+#vgt-table > thead > tr:nth-child(-n+2) {
+  background-color: #F8FAFB;
+}
+
+.vgt-table thead th.sorting-asc button:after {
+  border-bottom-color: #5BB46F;
+}
+
+.vgt-table thead th.sorting-desc button:before {
+  border-top-color: #5BB46F;
+}
+
+#vgt-table > tbody > tr {
+  box-shadow: 0 4px 6px rgba(153, 168, 184, 0.1);
+}
+
+#vgt-table > tbody > tr > td {
+  border: none;
+}
+
+#vgt-table th.vgt-row-header {
+  border: none;
+  padding: 0;
+  font-weight: 500;
+}
+#vgt-table th.vgt-row-header > span {
+  display:block;
+  padding: .75em 1.5em .75em .75em;
+  background-color: #E6EEF5;
+  margin-top: 5px;
+}
+#vgt-table th.vgt-row-header:first-child > span {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+#vgt-table th.vgt-row-header:last-child > span {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+#vgt-table th.vgt-row-header .triangle {
+  margin-right: 15px;
+}
+#vgt-table.grouped tbody tr td:first-child {
+  background-color: rgb(248, 250, 251);
+  width:30px;
+}
+#vgt-table.grouped thead th:first-child {
+  width:30px !important;
+}
+
+.vgt-wrap__footer {
+  margin: 10px 0;
+  border-radius: 5px;
+  padding: 0.5em;
+}
