@@ -7,8 +7,8 @@
       <CloseIcon />
       <span class="text-sm">(Esc)</span>
     </div>
-    <div class="fixed w-full h-full bg-gray-900 opacity-50 top-0 right-0 z-40" />
-    <div class="z-50 top-0 left-0 w-full absolute">
+    <div class="fixed w-full h-full bg-gray-900 opacity-25 top-0 right-0 z-40" />
+    <div class="z-50 top-0 left-0 w-full absolute shadow-lg">
       <suggestion-card
         :suggestion="suggestion"
         :is-inside-modal="true"
