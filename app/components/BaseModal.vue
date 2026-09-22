@@ -98,6 +98,7 @@ watch(() => props.apiError, (apiError) => {
   errors.value = []
 
   if (!apiError.response) {
+    console.error(apiError)
     errors.value = [apiError.request?.status ?? 'Unknown error']
     return
   }
