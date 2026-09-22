@@ -113,7 +113,7 @@
               <VeeField v-slot="{errors}" name="endedAt" rules="required" :model-value="params.endedAt">
                 <date-picker
                   id="end-date"
-                  v-model="params.endedAt"
+                  v-model:value="params.endedAt"
                   type="date"
                   style="width: 120px"
                   value-type="format"

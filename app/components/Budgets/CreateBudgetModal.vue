@@ -166,7 +166,7 @@
               <VeeField v-slot="{errors}" name="startedAt" rules="required" :model-value="params.startedAt">
                 <date-picker
                   id="start-date"
-                  v-model="params.startedAt"
+                  v-model:value="params.startedAt"
                   type="date"
                   style="width: 120px"
                   value-type="format"
@@ -180,7 +180,7 @@
               <VeeField v-slot="{errors}" name="endedAt" rules="required" :model-value="params.endedAt">
                 <date-picker
                   id="end-date"
-                  v-model="params.endedAt"
+                  v-model:value="params.endedAt"
                   type="date"
                   style="width: 120px"
                   value-type="format"
