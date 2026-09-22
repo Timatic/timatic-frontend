@@ -132,6 +132,8 @@ export const useBudgetsStore = defineStore('budgets', () => {
     const api = getTimaticApi()
     const result = await api.$patch('budgets/' + budgetFields.id, {
       data: { type: 'budgets', attributes, relationships }
+    }, {
+      params: { include: 'customer,allowedUsers,lastPeriod,supervisor' }
     })
 
     const newBudget = parseJsonApiDataToBudgets([result.data], result.included).first()
@@ -148,6 +150,8 @@ export const useBudgetsStore = defineStore('budgets', () => {
         type: 'budgets',
         attributes: { isArchived: true }
       }
+    }, {
+      params: { include: 'customer,allowedUsers,lastPeriod,supervisor' }
     })
 
     const newBudget = parseJsonApiDataToBudgets([result.data], result.included).first()
