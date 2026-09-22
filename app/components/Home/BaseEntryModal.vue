@@ -17,7 +17,7 @@
             <VeeField v-slot="{field, errors}" name="date" rules="required" :model-value="parameters.date">
               <date-picker
                 id="date"
-                v-model="parameters.date"
+                v-model:value="parameters.date"
                 type="date"
                 style="width: 100%;"
                 value-type="format"
