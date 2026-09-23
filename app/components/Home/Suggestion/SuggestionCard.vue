@@ -61,7 +61,7 @@
             </a>
           </div>
           <div v-else-if="hasOnlyOneActivity" class="flex-grow">
-            {{ $t('eventNames.' + firstActivity.eventTypeId) }}
+            {{ firstActivity.eventTypeName }}
           </div>
           <div v-if="hasOnlyOneActivity && firstActivity.eventTypeId === 'ticket_tagged'" class="flex-grow text-right tagged">
             <span class="circle">@</span> tagged

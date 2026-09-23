@@ -136,15 +136,6 @@ export default {
   exportType: 'Export Type',
   showHiddenSuggestions: 'Show {count} hidden suggestions',
   hiddenSuggestionsExplainer: 'Suggestions are hidden when you have entries for the same ticket on the same day',
-  eventNames: {
-    calendar_event_started: 'Calendar item',
-    calendar_event_finished: 'Calendar item',
-    ticket_saved: 'Ticket saved',
-    assets_object_focus_ended: 'Object(s) opened in Assets',
-    issue_changed_to_done: 'Jira issue changed to done',
-    issue_worklog_created: 'Jira worklog created',
-    commit_pushed: 'Commit pushed'
-  },
   totalAmountOfHours: 'Total amount of hours',
   validFrom: 'valid from',
   explainInternalSettlementOnCustomer: 'Explain why your work should not be charged to the customer',
