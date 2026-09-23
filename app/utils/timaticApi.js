@@ -1,7 +1,6 @@
 import axios from 'axios'
 import * as qs from 'qs'
-import { navigateTo } from '#app'
-import { clearToken, readToken } from '~/utils/tokenStorage'
+import { readToken } from '~/utils/tokenStorage'
 
 let _instance = null
 
@@ -38,9 +37,9 @@ export function getTimaticApi () {
     response => response,
     (error) => {
       if (error.response?.status === 401) {
-        clearToken()
-
-        return navigateTo('/login').then(() => Promise.reject(error))
+        return import('~/stores/auth')
+          .then(({ useAuthStore }) => useAuthStore().reauthenticate(window.location.pathname + window.location.search))
+          .then(() => Promise.reject(error))
       }
       console.error(error)
       return Promise.reject(error)

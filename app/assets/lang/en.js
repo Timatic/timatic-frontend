@@ -6,10 +6,10 @@ export default {
   logout: 'Logout',
   login: {
     title: 'Sign in to Timatic',
-    action: 'Log in with {provider}',
-    loading: 'Looking up your identity provider…',
+    intro: 'Signing in will take you to your identity provider.',
+    action: 'Sign in',
     completing: 'Signing you in…',
-    retry: 'Back to the login screen'
+    retry: 'Back to sign in'
   },
   recentActivity: 'Recent activity',
   suggestedActivities: 'Suggested activities',

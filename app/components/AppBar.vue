@@ -49,17 +49,30 @@
         </div>
       </div>
       <div class="w-1/4 mb-3 flex justify-end items-center pt-1">
-        <div class="flex items-center">
-          <div class="flex justify-center text-label items-center bg-avatar w-12 h-12 rounded-full mr-3">
-            <span>{{ initials(userFullName) }}</span>
+        <VMenu :distance="8" placement="bottom-end">
+          <div class="flex items-center cursor-pointer">
+            <div class="flex justify-center text-label items-center bg-avatar w-12 h-12 rounded-full mr-3">
+              <span>{{ initials(userFullName) }}</span>
+            </div>
+            <div class="">
+              <p>{{ userFullName }}</p>
+              <p class="text-sm text-label leading-5">
+                {{ position }}
+              </p>
+            </div>
           </div>
-          <div class="">
-            <p>{{ userFullName }}</p>
-            <p class="text-sm text-label leading-5">
-              {{ position }}
-            </p>
-          </div>
-        </div>
+
+          <template #popper>
+            <button
+              v-close-popper
+              type="button"
+              class="block w-full px-4 py-2 text-left text-sm text-page-title hover:bg-background"
+              @click="signOut"
+            >
+              {{ $t('logout') }}
+            </button>
+          </template>
+        </VMenu>
       </div>
     </div>
   </div>
@@ -69,10 +82,12 @@
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from '#app'
 import { initials } from '~/utils/filters'
+import { useAuthStore } from '~/stores/auth'
 import { useUsersStore } from '~/stores/users'
 
 const router = useRouter()
 const route = useRoute()
+const authStore = useAuthStore()
 const usersStore = useUsersStore()
 
 const position = ref('')
@@ -93,6 +108,10 @@ const overtimeLink = computed(() => {
     return url + usersStore.getCurrentUser.teamId + '/'
   }
 })
+
+function signOut () {
+  authStore.logout()
+}
 
 function link (href) {
   router.push({ path: href })

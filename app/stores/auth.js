@@ -4,26 +4,41 @@ import { navigateTo } from '#app'
 import { apiBaseUrl } from '~/utils/apiBaseUrl'
 import { challengeFor, randomString } from '~/utils/pkce'
 import { getTimaticApi } from '~/utils/timaticApi'
-import { clearToken, readToken, writeToken } from '~/utils/tokenStorage'
+import { clearToken, hasSignedOut, markSignedOut, readToken, writeToken } from '~/utils/tokenStorage'
 
 const CLIENT_ID = 'web'
 const VERIFIER_KEY = 'timatic.codeVerifier'
 const STATE_KEY = 'timatic.state'
 const INTENDED_KEY = 'timatic.intendedPath'
+const REAUTHENTICATED_KEY = 'timatic.reauthenticated'
 
 export class AuthorizationError extends Error {}
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref(readToken())
 
+  /**
+   * Whether the visitor signed out rather than simply arriving without a token. It decides who gets
+   * sent to the identity provider unasked and who gets a screen to press first.
+   */
+  const signedOut = ref(hasSignedOut())
+
   const isAuthenticated = computed(() => token.value !== null)
 
   /**
-   * Starts the authorization code flow. The api answers oauth/authorize with a redirect straight
-   * back to this app, because the web client is first party and skips the consent screen, but an
-   * unauthenticated visitor passes through the identity provider on the way.
+   * Starts the authorization code flow by leaving this app for the api.
    */
   async function login (intendedPath = '/') {
+    window.location.assign(await authorizationUrl(intendedPath))
+  }
+
+  /**
+   * Where a visitor without a token belongs. The api answers oauth/authorize with a redirect
+   * straight back to this app, because the web client is first party and skips the consent screen,
+   * but an unauthenticated visitor passes through the identity provider on the way, which is the
+   * login screen they should be seeing instead of one of this app's own.
+   */
+  async function authorizationUrl (intendedPath = '/') {
     const codeVerifier = randomString(64)
     const state = randomString(32)
 
@@ -39,7 +54,7 @@ export const useAuthStore = defineStore('auth', () => {
       code_challenge_method: 'S256'
     })
 
-    window.location.assign(apiBaseUrl() + '/oauth/authorize?' + query)
+    return apiBaseUrl() + '/oauth/authorize?' + query
   }
 
   /**
@@ -86,18 +101,47 @@ export const useAuthStore = defineStore('auth', () => {
     return intendedPath
   }
 
+  /**
+   * Revokes the token this app holds, then leaves for the api to end the browser session the
+   * authorization code flow runs on. Skipping that second step would let the next authorization
+   * request approve itself against a session that is still open.
+   */
   async function logout () {
     try {
       await getTimaticApi().$delete('oauth/token')
     } finally {
       forget()
-      await navigateTo('/login')
+      markSignedOut()
+      signedOut.value = true
+
+      window.location.assign(apiBaseUrl() + '/auth/logout')
     }
+  }
+
+  /**
+   * Answers a token the api rejects. The identity provider still remembers the visitor, so one
+   * silent attempt at a new token costs them nothing and spares them a screen. A second rejection
+   * in the same tab means something other than expiry is wrong, and repeating would bounce the
+   * browser between the two apps forever, so that one ends at the login screen.
+   */
+  async function reauthenticate (intendedPath = '/') {
+    forget()
+
+    if (window.sessionStorage.getItem(REAUTHENTICATED_KEY)) {
+      return navigateTo('/login')
+    }
+
+    window.sessionStorage.setItem(REAUTHENTICATED_KEY, '1')
+
+    await login(intendedPath)
   }
 
   function remember (issuedToken) {
     writeToken(issuedToken)
     token.value = issuedToken
+    signedOut.value = false
+
+    window.sessionStorage.removeItem(REAUTHENTICATED_KEY)
   }
 
   function forget () {
@@ -123,8 +167,11 @@ export const useAuthStore = defineStore('auth', () => {
 
   return {
     token,
+    signedOut,
     isAuthenticated,
+    authorizationUrl,
     login,
+    reauthenticate,
     handleCallback,
     logout,
     remember,
