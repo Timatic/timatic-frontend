@@ -18,7 +18,6 @@ export default {
   noActiveSources: 'Connect a source to get suggestions',
   manageSources: 'Manage sources',
   managedByCompany: 'Managed by your company',
-  connect: 'Connect',
   inactive: 'Inactive',
   customerName: 'Customer name',
   time: 'Time',

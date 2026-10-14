@@ -13,10 +13,11 @@
               <a
                 v-if="!integration.isActive && integration.connectUrl"
                 :href="integration.connectUrl"
+                target="_blank"
                 class="text-action-button text-sm mr-4"
                 @click.stop
               >
-                {{ $t('connect') }}
+                {{ integration.connectLabel }}
               </a>
               <span v-if="integration.isCompanyManaged" class="text-xs text-label mr-2">{{ $t('managedByCompany') }}</span>
               <span
