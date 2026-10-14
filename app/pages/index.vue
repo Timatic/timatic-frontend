@@ -11,7 +11,7 @@
           </div>
           <div class="flex items-center justify-between mr-4">
             <p class="text-label mr-5">
-              {{ $t('trackingSources', { active: activeIntegrationCount, total: integrations.length }) }}
+              {{ activeIntegrationCount ? $t('trackingSources', { active: activeIntegrationCount, total: integrations.length }) : $t('noActiveSources') }}
             </p>
             <button
               class="border border-input-border py-2 px-5 rounded font-normal h-12 text-action-button whitespace-nowrap"
