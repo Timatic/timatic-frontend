@@ -141,8 +141,6 @@ export default {
   effectiveFrom: 'Effective from',
   ticketNumber: 'Ticket number',
   exportType: 'Export Type',
-  showHiddenSuggestions: 'Show {count} hidden suggestions',
-  hiddenSuggestionsExplainer: 'Suggestions are hidden when you have entries for the same ticket on the same day',
   totalAmountOfHours: 'Total amount of hours',
   validFrom: 'valid from',
   explainInternalSettlementOnCustomer: 'Explain why your work should not be charged to the customer',

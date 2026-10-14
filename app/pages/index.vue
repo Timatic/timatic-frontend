@@ -56,27 +56,6 @@
             <p class="text-label mr-5">
               {{ $t('suggestionsExplainer') }}
             </p>
-            <div class="flex items-center mr-4">
-              <div class="input-wrapper mr-2">
-                <input
-                  id="closed"
-                  v-model="showHiddenSuggestions"
-                  class="checkbox"
-                  type="checkbox"
-                  name="closed"
-                  @click="showHiddenSuggestions = !showHiddenSuggestions"
-                >
-                <span class="checkmark" />
-              </div>
-              <label for="closed">{{ $t('showHiddenSuggestions', {count: hiddenSuggestions.count() }) }}</label>
-              <InfoIcon
-                v-tooltip="{
-                  content: $t('hiddenSuggestionsExplainer'),
-                  trigger: 'hover'
-                }"
-                class="inline-block text-filter-text ml-3"
-              />
-            </div>
           </div>
           <div class="overflow-auto h-90 pr-4 pt-2">
             <transition-group name="suggestions" tag="div">
@@ -192,7 +171,6 @@ const usersStore = useUsersStore()
 const rootEl = ref(null)
 const datepicker = ref(null)
 const showModal = ref({ create: false, suggestion: false, update: false })
-const showHiddenSuggestions = ref(false)
 const reload = ref(0)
 const selectedEntry = ref(null)
 const selectedSuggestion = ref(null)
@@ -236,22 +214,10 @@ const calendarEvents = computed(() => {
   }).all()
 })
 
-const suggestions = computed(() => suggestionsStore.collection.where('date', shortDisplayDate.value))
-
-const hiddenSuggestions = computed(() => {
-  const ticketIds = entriesForDisplayDate.value.where('isBasedOnSuggestion', false).pluck('ticketId').all()
-  return suggestions.value.filter((suggestion) => {
-    return suggestion.ticketId !== null && ticketIds.includes(suggestion.ticketId)
-  })
-})
-
-const visibleSuggestions = computed(() => {
-  if (showHiddenSuggestions.value) return suggestions.value
-  const ids = hiddenSuggestions.value.pluck('id')
-  return suggestions.value
-    .reject(suggestion => ids.contains(suggestion.id))
-    .sortBy(suggestion => suggestion.activities.first().startedAt)
-})
+const visibleSuggestions = computed(() => suggestionsStore.collection
+  .where('date', shortDisplayDate.value)
+  .sortBy(suggestion => suggestion.activities.first().startedAt)
+)
 
 const displayDateIsLocked = computed(() =>
   displayDate.value.isBefore(moment(usersStore.entryLockDate))
