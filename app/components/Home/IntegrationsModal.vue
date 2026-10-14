@@ -14,7 +14,7 @@
                 v-if="!integration.isActive && integration.connectUrl"
                 :href="integration.connectUrl"
                 target="_blank"
-                class="text-action-button text-sm mr-4"
+                class="bg-action-button py-2 px-10 rounded text-white font-medium h-12 inline-flex items-center mr-4"
                 @click.stop
               >
                 {{ integration.connectLabel }}
