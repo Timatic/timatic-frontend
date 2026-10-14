@@ -14,7 +14,7 @@
               {{ $t('trackingSources', { active: activeIntegrationCount, total: integrations.length }) }}
             </p>
             <button
-              class="border border-input-border text-action-button text-sm py-1 px-3 rounded whitespace-nowrap"
+              class="border border-input-border py-2 px-5 rounded font-normal h-12 text-action-button whitespace-nowrap"
               @click="showModal.integrations = true"
             >
               {{ $t('manageSources') }}
