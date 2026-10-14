@@ -1,8 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { navigateTo } from '#app'
-import { apiBaseUrl } from '~/utils/apiBaseUrl'
-import { challengeFor, randomString } from '~/utils/pkce'
 import { getTimaticApi } from '~/utils/timaticApi'
 import { clearToken, hasSignedOut, markSignedOut, readToken, writeToken } from '~/utils/tokenStorage'
 
@@ -37,6 +35,10 @@ export const useAuthStore = defineStore('auth', () => {
    * straight back to this app, because the web client is first party and skips the consent screen,
    * but an unauthenticated visitor passes through the identity provider on the way, which is the
    * login screen they should be seeing instead of one of this app's own.
+   *
+   * Someone who signed out asks the api to make them pass that provider again, rather than being
+   * carried through on the session it still holds. What that costs them is the api's to decide,
+   * since it is the side that knows which provider this deployment runs.
    */
   async function authorizationUrl (intendedPath = '/') {
     const codeVerifier = randomString(64)
@@ -53,6 +55,10 @@ export const useAuthStore = defineStore('auth', () => {
       code_challenge: await challengeFor(codeVerifier),
       code_challenge_method: 'S256'
     })
+
+    if (signedOut.value) {
+      query.set('reauthenticate', '1')
+    }
 
     return apiBaseUrl() + '/oauth/authorize?' + query
   }
@@ -178,3 +184,32 @@ export const useAuthStore = defineStore('auth', () => {
     forget
   }
 })
+
+/**
+ * The api lives on the api subdomain of whatever host serves this frontend, which is what keeps
+ * the two on one registrable domain.
+ */
+function apiBaseUrl () {
+  return 'https://api.' + document.location.hostname
+}
+
+/**
+ * Proof Key for Code Exchange. The verifier never leaves this browser until the token exchange, so
+ * a stolen authorization code is worthless on its own.
+ */
+function randomString (bytes) {
+  return base64Url(crypto.getRandomValues(new Uint8Array(bytes)))
+}
+
+async function challengeFor (codeVerifier) {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(codeVerifier))
+
+  return base64Url(new Uint8Array(digest))
+}
+
+function base64Url (bytes) {
+  return btoa(String.fromCharCode(...bytes))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '')
+}
