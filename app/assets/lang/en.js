@@ -13,6 +13,10 @@ export default {
   },
   recentActivity: 'Recent activity',
   suggestedActivities: 'Suggested activities',
+  integrations: 'Integrations',
+  managedByCompany: 'Managed by your company',
+  connect: 'Connect',
+  inactive: 'Inactive',
   customerName: 'Customer name',
   time: 'Time',
   activities: {

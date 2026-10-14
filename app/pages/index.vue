@@ -8,49 +8,9 @@
             <h3 class="text-2xl leading-6 pb-2 font-bold">
               {{ $t('suggestedActivities') }}
             </h3>
-            <VMenu
-              :distance="16"
-              popper-class="suggestions-popover"
-            >
-              <div class="tooltip-target b3 ml-3 text-filter-text cursor-pointer">
-                <InfoIcon />
-              </div>
-              <template #popper>
-                <div
-                  class="relative general-popover-wrapper bg-tooltip text-white z-50 rounded general-tooltip-arrow"
-                >
-                  <div class="popover-header border-b border-tooltip-border">
-                    <div class="py-2 px-4 flex justify-between">
-                      <p class="font-medium text-lg">
-                        {{ $t('suggestedActivities') }}
-                      </p>
-                      <div v-close-popper class="cursor-pointer">
-                        <CloseIcon class="x w-6 h-6" />
-                      </div>
-                    </div>
-                  </div>
-                  <div class="popover-content pb-2 px-4">
-                    <p class="py-2">
-                      When you save an incident in TOPdesk with a memo or with time spent, it will show up as a suggestion.<br>
-                      <br>
-                      If you had help with a TOPdesk incident, you can create a suggestion for your colleague.
-                      You need to mention him/her and add a tag <code>#time</code>.
-                      Both you and the tagged persons will get a suggestion.
-                      For example submit <code>#time @ludob @martijnb</code> in a private memo.<br>
-                      <br>
-                      The items in your Outlook Calendar are also shown as suggestions.<br>
-                      These suggestions can be improved in four ways by adding data to the calendar event.<br>
-                    </p>
-                    <ul class="list-disc pl-4">
-                      <li>Add the ticket number to the title, body or location.</li>
-                      <li>Add a customer tag in the body<br>e.g. <code>#customer-50340</code> for that customer.</li>
-                      <li>Add a budget tag or intern tag in the body<br>e.g. <code>#budget-123</code> or <code>#intern</code>.</li>
-                      <li>Add a hashtag <code>#ignore</code> to the body to make sure it won't generate a suggestion.</li>
-                    </ul>
-                  </div>
-                </div>
-              </template>
-            </VMenu>
+            <div class="b3 ml-3 text-filter-text cursor-pointer" @click="showModal.integrations = true">
+              <InfoIcon />
+            </div>
           </div>
           <div>
             <p class="text-label mr-5">
@@ -143,6 +103,10 @@
       :entry="selectedEntry"
       @closeModal="showModal.update=false"
     />
+    <integrations-modal
+      v-if="showModal.integrations"
+      @closeModal="showModal.integrations=false"
+    />
   </div>
 </template>
 
@@ -155,7 +119,6 @@ import { useSuggestionsStore } from '~/stores/suggestions'
 import { useEntriesStore } from '~/stores/entries'
 import { useUsersStore } from '~/stores/users'
 import InfoIcon from '~/assets/svg/info.svg'
-import CloseIcon from '~/assets/svg/close.svg'
 import PlusIcon from '~/assets/svg/plus.svg'
 
 useHead({ title: 'Activity - Timatic' })
@@ -170,7 +133,7 @@ const usersStore = useUsersStore()
 
 const rootEl = ref(null)
 const datepicker = ref(null)
-const showModal = ref({ create: false, suggestion: false, update: false })
+const showModal = ref({ create: false, suggestion: false, update: false, integrations: false })
 const reload = ref(0)
 const selectedEntry = ref(null)
 const selectedSuggestion = ref(null)
@@ -287,27 +250,9 @@ function onEntrySaved (entry) {
 }
 </script>
 
-<style>
-.suggestions-popover .v-popper__inner {
-  width: 365px;
-}
-</style>
 <style scoped>
 .tooltip:focus {
   outline: none;
-}
-
-.general-tooltip-arrow::after {
-  content: "";
-  height: 50px;
-  width: 50px;
-  position: absolute;
-  top: 30px;
-  left: -20px;
-  transform: rotate(45deg);
-  border-radius: 4px;
-  background-color: #253749;
-  z-index: -1;
 }
 
 :deep(.vuecal__event--static) {
