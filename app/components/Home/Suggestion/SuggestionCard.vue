@@ -70,7 +70,7 @@
       </div>
       <div class="w-8 flex flex-col justify-between m-4 relative gap-2">
         <template v-if="hasOnlyOneActivity">
-          <img :src="iconLink(firstActivity)" :alt="firstActivity.sourceId" style="height:20px">
+          <img :src="firstActivity.iconUrl" :alt="firstActivity.sourceId" style="height:20px">
         </template>
         <template v-else>
           <div class="cursor-pointer select-none" style="padding-left:5px;" @click="caretClicked">
@@ -96,7 +96,6 @@
 import { ref, computed } from 'vue'
 import moment from 'moment'
 import { useI18n } from 'vue-i18n'
-import { useRuntimeConfig } from '#app'
 import StackModal from './StackModal.vue'
 import ContactIcon from '~/assets/svg/contact.svg'
 import LinkIcon from '~/assets/svg/external-link.svg'
@@ -124,7 +123,6 @@ const props = defineProps({
 const emit = defineEmits(['closeModal', 'modal'])
 
 const { t } = useI18n()
-const config = useRuntimeConfig()
 const customersStore = useCustomersStore()
 const suggestionsStore = useSuggestionsStore()
 
@@ -148,10 +146,6 @@ const duration = computed(() => {
     return Math.round(dur.asMinutes()) + 'm'
   }
 })
-
-function iconLink (activity) {
-  return (config.app.baseURL || '/') + 'icon-' + activity.sourceId + '.svg'
-}
 
 function caretClicked () {
   if (props.isInsideModal) {

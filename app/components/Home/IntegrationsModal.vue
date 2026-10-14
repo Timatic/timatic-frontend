@@ -6,6 +6,7 @@
           <div class="flex items-center justify-between py-3 cursor-pointer" @click="toggle(integration.id)">
             <div class="flex items-center">
               <arrow-down class="mr-3" :class="{'rotate-180': expandedId === integration.id}" />
+              <img :src="integration.iconUrl" :alt="integration.label" class="mr-2" style="height:20px">
               <span class="font-medium">{{ integration.label }}</span>
               <span v-if="integration.isCompanyManaged" class="text-xs text-label ml-2">{{ $t('managedByCompany') }}</span>
             </div>
