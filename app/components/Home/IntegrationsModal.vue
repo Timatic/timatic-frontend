@@ -8,7 +8,6 @@
               <arrow-down class="mr-3" :class="{'rotate-180': expandedId === integration.id}" />
               <img :src="integration.iconUrl" :alt="integration.label" class="mr-2" style="height:20px">
               <span class="font-medium">{{ integration.label }}</span>
-              <span v-if="integration.isCompanyManaged" class="text-xs text-label ml-2">{{ $t('managedByCompany') }}</span>
             </div>
             <div class="flex items-center">
               <a
@@ -19,6 +18,7 @@
               >
                 {{ $t('connect') }}
               </a>
+              <span v-if="integration.isCompanyManaged" class="text-xs text-label mr-2">{{ $t('managedByCompany') }}</span>
               <span
                 class="border rounded text-xs uppercase px-1.5 py-0.5"
                 :class="integration.isActive ? 'border-green-500 text-green-600' : 'border-input-border text-label'"
