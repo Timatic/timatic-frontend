@@ -4,6 +4,13 @@ export default {
   customers: 'Customers',
   customer: 'Customer',
   logout: 'Logout',
+  login: {
+    title: 'Sign in to Timatic',
+    intro: 'Signing in will take you to your identity provider.',
+    action: 'Sign in',
+    completing: 'Signing you in…',
+    retry: 'Back to sign in'
+  },
   recentActivity: 'Recent activity',
   suggestedActivities: 'Suggested activities',
   customerName: 'Customer name',

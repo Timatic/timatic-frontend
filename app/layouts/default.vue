@@ -5,24 +5,28 @@
 </template>
 
 <script setup>
+import { useAuthStore } from '~/stores/auth'
 import { useUsersStore } from '~/stores/users'
 import { useCustomersStore } from '~/stores/customers'
 import { useBudgetsStore } from '~/stores/budgets'
 import { useBudgetTypesStore } from '~/stores/budgetTypes'
 import { useTeamsStore } from '~/stores/teams'
 
+const authStore = useAuthStore()
 const usersStore = useUsersStore()
 const customersStore = useCustomersStore()
 const budgetsStore = useBudgetsStore()
 const budgetTypesStore = useBudgetTypesStore()
 const teamsStore = useTeamsStore()
 
-usersStore.login()
-customersStore.fetch()
-budgetsStore.fetch()
-budgetTypesStore.fetch()
-teamsStore.fetch()
-usersStore.fetch()
+if (authStore.isAuthenticated) {
+  usersStore.login()
+  customersStore.fetch()
+  budgetsStore.fetch()
+  budgetTypesStore.fetch()
+  teamsStore.fetch()
+  usersStore.fetch()
+}
 </script>
 
 <style>
