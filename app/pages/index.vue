@@ -8,14 +8,17 @@
             <h3 class="text-2xl leading-6 pb-2 font-bold">
               {{ $t('suggestedActivities') }}
             </h3>
-            <div class="b3 ml-3 text-filter-text cursor-pointer" @click="showModal.integrations = true">
-              <InfoIcon />
-            </div>
           </div>
-          <div>
+          <div class="flex items-center justify-between mr-4">
             <p class="text-label mr-5">
-              {{ $t('suggestionsExplainer') }}
+              {{ $t('trackingSources', { active: activeIntegrationCount, total: integrations.length }) }}
             </p>
+            <button
+              class="border border-input-border text-action-button text-sm py-1 px-3 rounded whitespace-nowrap"
+              @click="showModal.integrations = true"
+            >
+              {{ $t('manageSources') }}
+            </button>
           </div>
           <div class="overflow-auto h-90 pr-4 pt-2">
             <transition-group name="suggestions" tag="div">
@@ -105,6 +108,7 @@
     />
     <integrations-modal
       v-if="showModal.integrations"
+      :integrations="integrations"
       @closeModal="showModal.integrations=false"
     />
   </div>
@@ -118,7 +122,7 @@ import { useCustomersStore } from '~/stores/customers'
 import { useSuggestionsStore } from '~/stores/suggestions'
 import { useEntriesStore } from '~/stores/entries'
 import { useUsersStore } from '~/stores/users'
-import InfoIcon from '~/assets/svg/info.svg'
+import { getTimaticApi } from '~/utils/timaticApi'
 import PlusIcon from '~/assets/svg/plus.svg'
 
 useHead({ title: 'Activity - Timatic' })
@@ -139,6 +143,7 @@ const selectedEntry = ref(null)
 const selectedSuggestion = ref(null)
 const calendarEventDeleteFunction = ref(null)
 const calendarEvent = ref(null)
+const integrations = ref([])
 
 const displayDate = ref(moment().startOf('day'))
 
@@ -182,6 +187,8 @@ const visibleSuggestions = computed(() => suggestionsStore.collection
   .sortBy(suggestion => suggestion.activities.first().startedAt)
 )
 
+const activeIntegrationCount = computed(() => integrations.value.filter(integration => integration.isActive).length)
+
 const displayDateIsLocked = computed(() =>
   displayDate.value.isBefore(moment(usersStore.entryLockDate))
 )
@@ -195,6 +202,12 @@ watch(displayDate, (newValue) => {
 
 onMounted(() => {
   loadEntriesAndSuggestions()
+
+  getTimaticApi().$get('suggestion-integrations').then((response) => {
+    integrations.value = response.data.map(integration => ({ id: integration.id, ...integration.attributes }))
+  }).catch((err) => {
+    console.error('Error loading integrations:', err)
+  })
 
   nextTick(() => {
     const selector = '#calendar-container .vuecal__body > div > div'

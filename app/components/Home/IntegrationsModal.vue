@@ -1,5 +1,5 @@
 <template>
-  <base-modal :title="$t('integrations')" width="w-11/12" :show-footer="false" @closeModal="$emit('closeModal')">
+  <base-modal :title="$t('sources')" width="w-11/12" :show-footer="false" @closeModal="$emit('closeModal')">
     <template #content>
       <div class="w-full">
         <div v-for="integration in integrations" :key="integration.id" class="border-b border-input-border last:border-b-0">
@@ -36,23 +36,20 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import BaseModal from '../BaseModal.vue'
 import ArrowDown from '~/assets/svg/arrow-down.svg'
-import { getTimaticApi } from '~/utils/timaticApi'
 
 defineEmits(['closeModal'])
 
-const integrations = ref([])
-const expandedId = ref(null)
-
-onMounted(() => {
-  getTimaticApi().$get('suggestion-integrations').then((response) => {
-    integrations.value = response.data.map(integration => ({ id: integration.id, ...integration.attributes }))
-  }).catch((err) => {
-    console.error('Error loading integrations:', err)
-  })
+defineProps({
+  integrations: {
+    type: Array,
+    required: true
+  }
 })
+
+const expandedId = ref(null)
 
 function toggle (id) {
   expandedId.value = expandedId.value === id ? null : id
