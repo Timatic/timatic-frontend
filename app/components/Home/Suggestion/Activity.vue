@@ -37,7 +37,7 @@
       </div>
     </div>
     <div class="w-8 flex flex-col justify-between m-4 relative gap-2">
-      <img :src="iconLink" :alt="activity.sourceId" style="height:20px">
+      <img :src="activity.iconUrl" :alt="activity.sourceId" style="height:20px">
     </div>
   </div>
 </template>
@@ -45,7 +45,6 @@
 <script setup>
 import moment from 'moment'
 import { computed } from 'vue'
-import { useRuntimeConfig } from '#app'
 
 const props = defineProps({
   activity: {
@@ -54,7 +53,6 @@ const props = defineProps({
   }
 })
 
-const config = useRuntimeConfig()
 
 const timeStart = computed(() => props.activity.startedAt.format('HH:mm'))
 const timeEnd = computed(() => props.activity.endedAt.format('HH:mm'))
@@ -66,7 +64,6 @@ const duration = computed(() => {
     return Math.ceil(dur.asMinutes()) + 'm'
   }
 })
-const iconLink = computed(() => (config.app.baseURL || '/') + 'icon-' + props.activity.sourceId + '.svg')
 </script>
 
 <style scoped>

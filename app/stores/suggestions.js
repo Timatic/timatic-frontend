@@ -22,7 +22,8 @@ export const useSuggestionsStore = defineStore('suggestions', () => {
     const rawActivities = collect(response.included).where('type', 'activities')
     const rawEvents = collect(response.included).where('type', 'events')
     const rawEventTypes = collect(response.included).where('type', 'eventTypes')
-    const activities = getTransformedActivities(rawActivities, rawEvents, rawEventTypes)
+    const rawSources = collect(response.included).where('type', 'sources')
+    const activities = getTransformedActivities(rawActivities, rawEvents, rawEventTypes, rawSources)
 
     let newSuggestions = collect(response.data).transform((suggestion) => {
       const activityIds = collect(suggestion.relationships.activities.data).pluck('id')
@@ -51,7 +52,7 @@ export const useSuggestionsStore = defineStore('suggestions', () => {
   return { suggestions, collection, fetch, deleteSuggestion }
 })
 
-function getTransformedActivities (rawActivities, rawEvents, rawEventTypes) {
+function getTransformedActivities (rawActivities, rawEvents, rawEventTypes, rawSources) {
   return rawActivities.transform((activity) => {
     const eventIds = collect(activity.relationships.events.data).pluck('id')
     const events = rawEvents.whereIn('id', eventIds.all()).transform((event) => ({ ...event.attributes }))
@@ -64,6 +65,7 @@ function getTransformedActivities (rawActivities, rawEvents, rawEventTypes) {
       startedAt: moment(activity.attributes.startedAt),
       endedAt: moment(activity.attributes.endedAt),
       eventTypeName: eventType?.attributes.name,
+      iconUrl: rawSources.firstWhere('id', activity.attributes.sourceId)?.attributes.iconUrl,
       events
     }
   })
