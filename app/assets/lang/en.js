@@ -21,6 +21,7 @@ export default {
   inactive: 'Inactive',
   customerName: 'Customer name',
   time: 'Time',
+  moreCount: '+{count} more',
   activities: {
     activities: 'Activities',
     firstLine: 'First line notification',

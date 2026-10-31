@@ -22,9 +22,15 @@
       </template>
     </div>
     <div class="flex-1 my-4 relative">
-      <div class="leading-5 mb-1 text-page-title text-lg font-medium">
-        <p v-for="(event, key) in activity.events" :key="key">
-          {{ event.title }}
+      <p class="leading-5 mb-1 text-page-title text-lg font-medium" style="word-break: break-word">
+        {{ activity.title }}
+      </p>
+      <div v-if="eventTitles.length" class="text-filter-text text-sm leading-5" style="word-break: break-word">
+        <p v-for="eventTitle in eventTitles.slice(0, 3)" :key="eventTitle">
+          {{ eventTitle }}
+        </p>
+        <p v-if="eventTitles.length > 3">
+          {{ $t('moreCount', { count: eventTitles.length - 3 }) }}
         </p>
       </div>
       <div class="flex my-1">
@@ -43,7 +49,6 @@
 </template>
 
 <script setup>
-import moment from 'moment'
 import { computed } from 'vue'
 
 const props = defineProps({
@@ -53,17 +58,10 @@ const props = defineProps({
   }
 })
 
-
 const timeStart = computed(() => props.activity.startedAt.format('HH:mm'))
 const timeEnd = computed(() => props.activity.endedAt.format('HH:mm'))
-const duration = computed(() => {
-  const dur = moment.duration(props.activity.endedAt.diff(props.activity.startedAt))
-  if (dur.asHours() >= 1) {
-    return Math.round(dur.asHours() * 10) / 10 + 'h'
-  } else {
-    return Math.ceil(dur.asMinutes()) + 'm'
-  }
-})
+const eventTitles = computed(() => props.activity.events.pluck('title').unique().reject(title => title === props.activity.title).all())
+const duration = computed(() => durationLabel(activitiesDurationInMinutes([props.activity])))
 </script>
 
 <style scoped>
