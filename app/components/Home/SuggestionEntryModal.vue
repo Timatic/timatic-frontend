@@ -11,6 +11,7 @@
     :settlement="settlement"
     :description="description"
     :budget="budget"
+    :activities="stackedActivities"
     @closeModal="$emit('closeModal');"
     @entrySaved="onSubmit"
   />
@@ -39,9 +40,16 @@ const suggestionsStore = useSuggestionsStore()
 const customer = ref(customersStore.getById(props.suggestion.customerId))
 const budget = ref(budgetsStore.getById(props.suggestion.budgetId))
 
-const startTime = computed(() => props.suggestion.activities.first().startedAt.format('HH:mm'))
-const endTime = computed(() => props.suggestion.activities.first().endedAt.format('HH:mm'))
-const date = computed(() => props.suggestion.activities.first().startedAt.clone().startOf('day'))
+const activities = computed(() => props.suggestion.activities.sortBy(activity => activity.startedAt.valueOf()).all())
+const stackedActivities = computed(() => activities.value.length > 1 ? activities.value : null)
+const firstStartedAt = computed(() => activities.value[0].startedAt)
+
+const startTime = computed(() => firstStartedAt.value.format('HH:mm'))
+// A stack is saved as one block from the earliest start, sized to the merged duration of its activities.
+const endTime = computed(() => stackedActivities.value
+  ? firstStartedAt.value.clone().add(activitiesDurationInMinutes(activities.value), 'minutes').format('HH:mm')
+  : activities.value[0].endedAt.format('HH:mm'))
+const date = computed(() => firstStartedAt.value.clone().startOf('day'))
 const settlement = computed(() => props.suggestion.activities.first().isInternal ? 'internal' : 'paid')
 const description = computed(() => props.suggestion.activities.first().description)
 
