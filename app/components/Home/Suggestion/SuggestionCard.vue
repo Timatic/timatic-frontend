@@ -1,5 +1,5 @@
 <template>
-  <div class="relative" :class="{'mb-4': !isInsideModal && !isStacked, 'mb-8': !isInsideModal && isStacked}">
+  <div class="relative" :class="{'mb-4': !isInsideModal && !isStacked, 'mb-12': !isInsideModal && isStacked}">
     <template v-if="isStacked && !isInsideModal">
       <div class="stack-tile stack-tile-back" aria-hidden="true" />
       <div class="stack-tile stack-tile-front" aria-hidden="true" />
@@ -194,14 +194,14 @@ function deleteSuggestion () {
 }
 
 .stack-tile-front {
-  bottom: -8px;
+  bottom: -15px;
   left: 15px;
   right: 15px;
 }
 
 .stack-tile-back {
-  bottom: -15px;
-  left: 31px;
-  right: 29px;
+  bottom: -30px;
+  left: 30px;
+  right: 30px;
 }
 </style>
