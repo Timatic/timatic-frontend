@@ -76,6 +76,16 @@
           <div class="cursor-pointer select-none" style="padding-left:5px;" @click="caretClicked">
             <arrow-down :class="{'rotate-180':!isInsideModal}" />
           </div>
+          <div class="flex flex-col items-center">
+            <img
+              v-for="(activity, index) in sourceActivities"
+              :key="activity.sourceId"
+              :src="activity.iconUrl"
+              :alt="activity.sourceId"
+              style="height:20px"
+              :class="{'-mt-1': index > 0}"
+            >
+          </div>
         </template>
         <div class="w-8 h-8 border pt-1 text-center rounded cursor-pointer text-action-button border-input-border">
           <div class="relative" @click="$emit('modal', suggestion)">
@@ -130,6 +140,7 @@ const showStackModal = ref(false)
 const hasOnlyOneActivity = computed(() => props.suggestion.activities.count() === 1)
 const isStacked = computed(() => !hasOnlyOneActivity.value)
 const firstActivity = computed(() => props.suggestion.activities.first())
+const sourceActivities = computed(() => props.suggestion.activities.sortBy('startedAt').unique('sourceId').all())
 const title = computed(() => props.suggestion.ticketTitle || firstActivity.value.title)
 const customer = computed(() => customersStore.getById(props.suggestion.customerId))
 const timeStart = computed(() => firstActivity.value.startedAt.format('HH:mm'))
