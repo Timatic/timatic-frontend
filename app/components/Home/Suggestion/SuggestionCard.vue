@@ -94,7 +94,6 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import moment from 'moment'
 import { useI18n } from 'vue-i18n'
 import StackModal from './StackModal.vue'
 import ContactIcon from '~/assets/svg/contact.svg'
@@ -135,17 +134,7 @@ const title = computed(() => props.suggestion.ticketTitle || firstActivity.value
 const customer = computed(() => customersStore.getById(props.suggestion.customerId))
 const timeStart = computed(() => firstActivity.value.startedAt.format('HH:mm'))
 const timeEnd = computed(() => firstActivity.value.endedAt.format('HH:mm'))
-const duration = computed(() => {
-  const dur = moment.duration()
-  props.suggestion.activities.each((activity) => {
-    dur.add(moment.duration(activity.endedAt.diff(activity.startedAt)))
-  })
-  if (dur.asHours() >= 1) {
-    return Math.round(dur.asHours() * 10) / 10 + 'h'
-  } else {
-    return Math.round(dur.asMinutes()) + 'm'
-  }
-})
+const duration = computed(() => durationLabel(activitiesDurationInMinutes(props.suggestion.activities.all())))
 
 function caretClicked () {
   if (props.isInsideModal) {
