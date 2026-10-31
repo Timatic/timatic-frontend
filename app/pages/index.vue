@@ -21,7 +21,7 @@
             </button>
           </div>
           <div class="overflow-auto h-90 pr-4 pt-2">
-            <transition-group name="suggestions" tag="div">
+            <transition-group name="suggestions" tag="div" class="relative">
               <div v-for="suggestion in visibleSuggestions" :key="suggestion.id" class="suggestions-item">
                 <suggestion-card :suggestion="suggestion" @modal="showSuggestionModal" />
               </div>
@@ -312,6 +312,8 @@ function onEntrySaved (entry) {
 }
 .suggestions-leave-active {
   position: absolute;
+  left: 0;
+  right: 0;
 }
 
 code {
