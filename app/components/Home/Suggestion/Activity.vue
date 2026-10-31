@@ -42,8 +42,15 @@
         </div>
       </div>
     </div>
-    <div class="w-8 flex flex-col justify-between m-4 relative gap-2">
-      <img :src="activity.iconUrl" :alt="activity.sourceId" style="height:20px">
+    <div class="w-8 flex flex-col items-center m-4 relative">
+      <img
+        v-for="(source, index) in sources"
+        :key="source.sourceId"
+        :src="source.iconUrl"
+        :alt="source.sourceId"
+        style="height:20px"
+        :class="{'-mt-1': index > 0}"
+      >
     </div>
   </div>
 </template>
@@ -60,6 +67,7 @@ const props = defineProps({
 
 const timeStart = computed(() => props.activity.startedAt.format('HH:mm'))
 const timeEnd = computed(() => props.activity.endedAt.format('HH:mm'))
+const sources = computed(() => [props.activity, ...props.activity.events.all()].filter((source, index, all) => all.findIndex(other => other.sourceId === source.sourceId) === index))
 const eventTitles = computed(() => props.activity.events.pluck('title').unique().reject(title => title === props.activity.title).all())
 const duration = computed(() => durationLabel(activitiesDurationInMinutes([props.activity])))
 </script>
