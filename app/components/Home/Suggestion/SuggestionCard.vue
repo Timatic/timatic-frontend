@@ -78,10 +78,10 @@
           </div>
           <div class="flex flex-col items-center">
             <img
-              v-for="(activity, index) in sourceActivities"
-              :key="activity.sourceId"
-              :src="activity.iconUrl"
-              :alt="activity.sourceId"
+              v-for="(source, index) in sources"
+              :key="source.sourceId"
+              :src="source.iconUrl"
+              :alt="source.sourceId"
               style="height:20px"
               :class="{'-mt-1': index > 0}"
             >
@@ -140,7 +140,8 @@ const showStackModal = ref(false)
 const hasOnlyOneActivity = computed(() => props.suggestion.activities.count() === 1)
 const isStacked = computed(() => !hasOnlyOneActivity.value)
 const firstActivity = computed(() => props.suggestion.activities.first())
-const sourceActivities = computed(() => props.suggestion.activities.sortBy('startedAt').unique('sourceId').all())
+// Events of other sources can underline an activity, so they count as sources of the stack too.
+const sources = computed(() => props.suggestion.activities.sortBy('startedAt').flatMap(activity => [activity, ...activity.events.all()]).unique('sourceId').all())
 const title = computed(() => props.suggestion.ticketTitle || firstActivity.value.title)
 const customer = computed(() => customersStore.getById(props.suggestion.customerId))
 const timeStart = computed(() => firstActivity.value.startedAt.format('HH:mm'))
