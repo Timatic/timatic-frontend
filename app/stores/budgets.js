@@ -66,7 +66,7 @@ export const useBudgetsStore = defineStore('budgets', () => {
       title: budgetFields.title,
       showToCustomer: budgetFields.showToCustomer,
       customerId: budgetFields.customer.id,
-      initialMinutes: parseFloat(budgetFields.initialHours) * 60,
+      initialMinutes: Math.round(parseFloat(budgetFields.initialHours) * 60),
       budgetTypeId: budgetFields.type.id,
       contractId: budgetFields.contractId,
       description: budgetFields.description,
@@ -75,7 +75,7 @@ export const useBudgetsStore = defineStore('budgets', () => {
       endedAt: moment(budgetFields.endedAt, 'DD-MM-YYYY').toJSON()
     }
     const relationships = {
-      allowedUsers: { data: budgetFields.allowedUsers || [] }
+      allowedUsers: { data: (budgetFields.allowedUsers || []).map(user => ({ type: 'users', id: user.id })) }
     }
 
     const budgetType = budgetFields.type
@@ -108,14 +108,14 @@ export const useBudgetsStore = defineStore('budgets', () => {
       id: budgetFields.id,
       title: budgetFields.title,
       showToCustomer: budgetFields.showToCustomer,
-      initialMinutes: parseFloat(budgetFields.initialHours) * 60,
+      initialMinutes: Math.round(parseFloat(budgetFields.initialHours) * 60),
       contractId: budgetFields.contractId,
       description: budgetFields.description,
       totalPrice: budgetFields.totalPrice,
       endedAt: moment(budgetFields.endedAt, 'DD-MM-YYYY').toJSON()
     }
     const relationships = {
-      allowedUsers: { data: budgetFields.allowedUsers || [] }
+      allowedUsers: { data: (budgetFields.allowedUsers || []).map(user => ({ type: 'users', id: user.id })) }
     }
 
     if (budgetFields.effectiveFrom) {
