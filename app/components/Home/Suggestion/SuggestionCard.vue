@@ -146,7 +146,7 @@ const title = computed(() => props.suggestion.ticketTitle || firstActivity.value
 const customer = computed(() => customersStore.getById(props.suggestion.customerId))
 const timeStart = computed(() => firstActivity.value.startedAt.format('HH:mm'))
 const timeEnd = computed(() => firstActivity.value.endedAt.format('HH:mm'))
-const duration = computed(() => durationLabel(activitiesDurationInMinutes(props.suggestion.activities.all())))
+const duration = computed(() => durationLabel(props.suggestion.minutesSpent))
 
 function caretClicked () {
   if (props.isInsideModal) {

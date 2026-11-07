@@ -404,7 +404,8 @@ const props = defineProps({
   entryId: { default: null, type: String },
   suggestionId: { default: null, type: String },
   userId: { default: null, type: String },
-  activities: { default: null, type: Array }
+  activities: { default: null, type: Array },
+  minutesSpent: { default: null, type: Number }
 })
 
 const emit = defineEmits(['closeModal', 'entrySaved'])
@@ -432,7 +433,7 @@ const duration = ref('')
 const error = ref(null)
 const editOvertime = ref(false)
 
-const stackedDuration = computed(() => props.activities && durationLabel(activitiesDurationInMinutes(props.activities)))
+const stackedDuration = computed(() => props.activities && durationLabel(props.minutesSpent))
 const customerNotSelected = computed(() => parameters.value.customer === null)
 const settlementIsInternal = computed(() => parameters.value.settlement === 'internal')
 const customerIsOwnOrganisation = computed(() => parameters.value.customer?.isOwnOrganization === true)

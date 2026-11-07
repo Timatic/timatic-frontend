@@ -69,7 +69,7 @@ const timeStart = computed(() => props.activity.startedAt.format('HH:mm'))
 const timeEnd = computed(() => props.activity.endedAt.format('HH:mm'))
 const sources = computed(() => [props.activity, ...props.activity.events.all()].filter((source, index, all) => all.findIndex(other => other.sourceId === source.sourceId) === index))
 const eventTitles = computed(() => props.activity.events.pluck('title').unique().reject(title => title === props.activity.title).all())
-const duration = computed(() => durationLabel(activitiesDurationInMinutes([props.activity])))
+const duration = computed(() => durationLabel(Math.round(props.activity.endedAt.diff(props.activity.startedAt, 'minutes', true))))
 </script>
 
 <style scoped>
