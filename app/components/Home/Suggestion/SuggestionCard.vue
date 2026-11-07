@@ -1,5 +1,5 @@
 <template>
-  <div class="relative" :class="{'mb-4': !isInsideModal && !isStacked, 'mb-8': !isInsideModal && isStacked}">
+  <div class="relative" :class="{'mb-4': !isInsideModal && !isStacked, 'mb-12': !isInsideModal && isStacked}">
     <template v-if="isStacked && !isInsideModal">
       <div class="stack-tile stack-tile-back" aria-hidden="true" />
       <div class="stack-tile stack-tile-front" aria-hidden="true" />
@@ -76,6 +76,16 @@
           <div class="cursor-pointer select-none" style="padding-left:5px;" @click="caretClicked">
             <arrow-down :class="{'rotate-180':!isInsideModal}" />
           </div>
+          <div class="flex flex-col items-center">
+            <img
+              v-for="(source, index) in sources"
+              :key="source.sourceId"
+              :src="source.iconUrl"
+              :alt="source.sourceId"
+              style="height:20px"
+              :class="{'-mt-1': index > 0}"
+            >
+          </div>
         </template>
         <div class="w-8 h-8 border pt-1 text-center rounded cursor-pointer text-action-button border-input-border">
           <div class="relative" @click="$emit('modal', suggestion)">
@@ -94,7 +104,6 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import moment from 'moment'
 import { useI18n } from 'vue-i18n'
 import StackModal from './StackModal.vue'
 import ContactIcon from '~/assets/svg/contact.svg'
@@ -131,21 +140,13 @@ const showStackModal = ref(false)
 const hasOnlyOneActivity = computed(() => props.suggestion.activities.count() === 1)
 const isStacked = computed(() => !hasOnlyOneActivity.value)
 const firstActivity = computed(() => props.suggestion.activities.first())
-const title = computed(() => props.suggestion.ticketTitle || firstActivity.value.events.first()?.title)
+// Events of other sources can underline an activity, so they count as sources of the stack too.
+const sources = computed(() => props.suggestion.activities.sortBy('startedAt').flatMap(activity => [activity, ...activity.events.all()]).unique('sourceId').all())
+const title = computed(() => props.suggestion.ticketTitle || firstActivity.value.title)
 const customer = computed(() => customersStore.getById(props.suggestion.customerId))
 const timeStart = computed(() => firstActivity.value.startedAt.format('HH:mm'))
 const timeEnd = computed(() => firstActivity.value.endedAt.format('HH:mm'))
-const duration = computed(() => {
-  const dur = moment.duration()
-  props.suggestion.activities.each((activity) => {
-    dur.add(moment.duration(activity.endedAt.diff(activity.startedAt)))
-  })
-  if (dur.asHours() >= 1) {
-    return Math.round(dur.asHours() * 10) / 10 + 'h'
-  } else {
-    return Math.round(dur.asMinutes()) + 'm'
-  }
-})
+const duration = computed(() => durationLabel(props.suggestion.minutesSpent))
 
 function caretClicked () {
   if (props.isInsideModal) {
@@ -205,14 +206,14 @@ function deleteSuggestion () {
 }
 
 .stack-tile-front {
-  bottom: -8px;
+  bottom: -15px;
   left: 15px;
   right: 15px;
 }
 
 .stack-tile-back {
-  bottom: -15px;
-  left: 31px;
-  right: 29px;
+  bottom: -30px;
+  left: 30px;
+  right: 30px;
 }
 </style>

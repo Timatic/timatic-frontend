@@ -21,6 +21,9 @@ export default {
   inactive: 'Inactive',
   customerName: 'Customer name',
   time: 'Time',
+  approximateDuration: '±{duration}',
+  savedAsEntries: 'Saved as one entry | Saved as {count} entries',
+  moreCount: '+{count} more',
   activities: {
     activities: 'Activities',
     firstLine: 'First line notification',

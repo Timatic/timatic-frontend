@@ -32,7 +32,39 @@
           <div class="font-roboto font-medium text-black">
             {{ $t('time') }}
           </div>
-          <div class="flex items-center">
+          <div v-if="activities" class="flex items-center text-label">
+            {{ $t('approximateDuration', { duration: stackedDuration }) }}
+            <VDropdown
+              :triggers="['hover', 'click']"
+              :popper-triggers="['hover']"
+              placement="right-start"
+              popper-class="activities-popover"
+            >
+              <InfoIcon class="w-4 h-4 ml-2 text-info-icon cursor-pointer" />
+              <template #popper>
+                <div class="w-[450px] text-sm text-white">
+                  <div class="flex justify-between items-center px-6 py-3 border-b border-tooltip-border">
+                    <span class="text-lg font-medium">{{ $t('activities.activities') }}</span>
+                    <button v-close-popper type="button">
+                      <CloseIcon />
+                    </button>
+                  </div>
+                  <div class="px-6 py-2 leading-5">
+                    <p v-for="activity in activities" :key="activity.id" class="py-1">
+                      {{ activity.startedAt.format('HH:mm') }} - {{ activity.endedAt.format('HH:mm') }}: {{ activity.events.first()?.title ?? activity.eventTypeName }}
+                    </p>
+                  </div>
+                </div>
+              </template>
+            </VDropdown>
+          </div>
+          <div v-if="timeBlocks" class="text-sm text-filter-text leading-5">
+            <p>{{ $t('savedAsEntries', timeBlocks.length) }}</p>
+            <p v-for="block in timeBlocks" :key="block.startedAt.valueOf()">
+              {{ block.startedAt.format('HH:mm') }} - {{ block.endedAt.format('HH:mm') }}
+            </p>
+          </div>
+          <div v-show="!activities" class="flex items-center">
             <div>
               <VeeField v-slot="{field, errors}" name="startTime" rules="required" :model-value="parameters.timeStart">
                 <vue-timepicker
@@ -336,6 +368,8 @@ import BudgetSelect from '../FormElements/BudgetSelect.vue'
 import BaseModal from '../BaseModal.vue'
 import ClientCommunicationModal from './ClientCommunicationModal.vue'
 import LinkIcon from '~/assets/svg/external-link.svg'
+import InfoIcon from '~/assets/svg/info.svg'
+import CloseIcon from '~/assets/svg/close.svg'
 import { useEntriesStore } from '~/stores/entries'
 import { useBudgetTypesStore } from '~/stores/budgetTypes'
 import { useUsersStore } from '~/stores/users'
@@ -375,7 +409,10 @@ const props = defineProps({
   customOvertimeHours: { default: null, type: Object },
   entryId: { default: null, type: String },
   suggestionId: { default: null, type: String },
-  userId: { default: null, type: String }
+  userId: { default: null, type: String },
+  activities: { default: null, type: Array },
+  minutesSpent: { default: null, type: Number },
+  timeBlocks: { default: null, type: Array }
 })
 
 const emit = defineEmits(['closeModal', 'entrySaved'])
@@ -403,6 +440,7 @@ const duration = ref('')
 const error = ref(null)
 const editOvertime = ref(false)
 
+const stackedDuration = computed(() => props.activities && durationLabel(props.minutesSpent))
 const customerNotSelected = computed(() => parameters.value.customer === null)
 const settlementIsInternal = computed(() => parameters.value.settlement === 'internal')
 const customerIsOwnOrganisation = computed(() => parameters.value.customer?.isOwnOrganization === true)
@@ -513,7 +551,7 @@ function calculateDuration () {
   duration.value = moment(endTime.diff(startTime)).utc().format('HH:mm')
 }
 
-function submit () {
+async function submit () {
   const entryFields = {
     ...parameters.value,
     type: 'regular',
@@ -521,7 +559,7 @@ function submit () {
     endedAt: endMoment.value
   }
 
-  if (editOvertime.value) {
+  if (editOvertime.value && !props.timeBlocks) {
     const [startHour, startMinute] = parameters.value.customOvertimeHours.start.split(':')
     const startOvertime = startMoment.value.clone().startOf('day').add(startHour, 'hours').add(startMinute, 'minutes')
 
@@ -540,12 +578,23 @@ function submit () {
     entryFields.suggestionId = props.suggestionId
   }
 
-  entriesStore.save(entryFields)
-    .then((response) => {
-      emit('entrySaved', parameters.value)
-    }).catch((err) => {
-      error.value = err
-    })
+  const timeRanges = props.timeBlocks
+    ? props.timeBlocks.map(block => ({ startedAt: onEntryDate(block.startedAt), endedAt: onEntryDate(block.endedAt) }))
+    : [{ startedAt: startMoment.value, endedAt: endMoment.value }]
+
+  try {
+    // ponytail: saved one by one, so a failure halfway leaves the earlier blocks saved; a bulk endpoint would make it atomic
+    for (const timeRange of timeRanges) {
+      await entriesStore.save({ ...entryFields, ...timeRange })
+    }
+    emit('entrySaved', parameters.value)
+  } catch (err) {
+    error.value = err
+  }
+}
+
+function onEntryDate (time) {
+  return moment(parameters.value.date, 'DD-MM-YYYY').hours(time.hours()).minutes(time.minutes())
 }
 
 function toggleCustomOvertime () {
@@ -599,5 +648,15 @@ function disabledDates (date) {
 :deep(.mx-input) {
   font-size: 1em;
   height: 35px;
+}
+</style>
+
+<style>
+.activities-popover.v-popper--theme-dropdown .v-popper__inner {
+  @apply bg-tooltip border-0;
+}
+.activities-popover.v-popper--theme-dropdown .v-popper__arrow-outer,
+.activities-popover.v-popper--theme-dropdown .v-popper__arrow-inner {
+  @apply border-tooltip;
 }
 </style>
