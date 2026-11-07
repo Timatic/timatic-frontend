@@ -13,6 +13,7 @@
     :budget="budget"
     :activities="stackedActivities"
     :minutes-spent="suggestion.minutesSpent"
+    :time-blocks="timeBlocks"
     @closeModal="$emit('closeModal');"
     @entrySaved="onSubmit"
   />
@@ -20,6 +21,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import moment from 'moment'
 import EntryModal from './BaseEntryModal.vue'
 import { useCustomersStore } from '~/stores/customers'
 import { useBudgetsStore } from '~/stores/budgets'
@@ -44,12 +46,19 @@ const budget = ref(budgetsStore.getById(props.suggestion.budgetId))
 const activities = computed(() => props.suggestion.activities.sortBy(activity => activity.startedAt.valueOf()).all())
 const stackedActivities = computed(() => activities.value.length > 1 ? activities.value : null)
 const firstStartedAt = computed(() => activities.value[0].startedAt)
+// A stack is saved as one entry per block of overlapping activities, so no time is counted twice.
+const timeBlocks = computed(() => stackedActivities.value && activities.value.reduce((blocks, activity) => {
+  const lastBlock = blocks.at(-1)
+  if (lastBlock && activity.startedAt.isBefore(lastBlock.endedAt)) {
+    lastBlock.endedAt = moment.max(lastBlock.endedAt, activity.endedAt)
+  } else {
+    blocks.push({ startedAt: activity.startedAt, endedAt: activity.endedAt })
+  }
+  return blocks
+}, []))
 
 const startTime = computed(() => firstStartedAt.value.format('HH:mm'))
-// A stack is saved as one block from the earliest start, sized to the time spent on its activities.
-const endTime = computed(() => stackedActivities.value
-  ? firstStartedAt.value.clone().add(props.suggestion.minutesSpent, 'minutes').format('HH:mm')
-  : activities.value[0].endedAt.format('HH:mm'))
+const endTime = computed(() => (timeBlocks.value?.at(-1).endedAt ?? activities.value[0].endedAt).format('HH:mm'))
 const date = computed(() => firstStartedAt.value.clone().startOf('day'))
 const settlement = computed(() => props.suggestion.activities.first().isInternal ? 'internal' : 'paid')
 const description = computed(() => props.suggestion.activities.first().description)

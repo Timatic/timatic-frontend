@@ -58,6 +58,12 @@
               </template>
             </VDropdown>
           </div>
+          <div v-if="timeBlocks" class="text-sm text-filter-text leading-5">
+            <p>{{ $t('savedAsEntries', timeBlocks.length) }}</p>
+            <p v-for="block in timeBlocks" :key="block.startedAt.valueOf()">
+              {{ block.startedAt.format('HH:mm') }} - {{ block.endedAt.format('HH:mm') }}
+            </p>
+          </div>
           <div v-show="!activities" class="flex items-center">
             <div>
               <VeeField v-slot="{field, errors}" name="startTime" rules="required" :model-value="parameters.timeStart">
@@ -405,7 +411,8 @@ const props = defineProps({
   suggestionId: { default: null, type: String },
   userId: { default: null, type: String },
   activities: { default: null, type: Array },
-  minutesSpent: { default: null, type: Number }
+  minutesSpent: { default: null, type: Number },
+  timeBlocks: { default: null, type: Array }
 })
 
 const emit = defineEmits(['closeModal', 'entrySaved'])
@@ -544,7 +551,7 @@ function calculateDuration () {
   duration.value = moment(endTime.diff(startTime)).utc().format('HH:mm')
 }
 
-function submit () {
+async function submit () {
   const entryFields = {
     ...parameters.value,
     type: 'regular',
@@ -552,7 +559,7 @@ function submit () {
     endedAt: endMoment.value
   }
 
-  if (editOvertime.value) {
+  if (editOvertime.value && !props.timeBlocks) {
     const [startHour, startMinute] = parameters.value.customOvertimeHours.start.split(':')
     const startOvertime = startMoment.value.clone().startOf('day').add(startHour, 'hours').add(startMinute, 'minutes')
 
@@ -571,12 +578,23 @@ function submit () {
     entryFields.suggestionId = props.suggestionId
   }
 
-  entriesStore.save(entryFields)
-    .then((response) => {
-      emit('entrySaved', parameters.value)
-    }).catch((err) => {
-      error.value = err
-    })
+  const timeRanges = props.timeBlocks
+    ? props.timeBlocks.map(block => ({ startedAt: onEntryDate(block.startedAt), endedAt: onEntryDate(block.endedAt) }))
+    : [{ startedAt: startMoment.value, endedAt: endMoment.value }]
+
+  try {
+    // ponytail: saved one by one, so a failure halfway leaves the earlier blocks saved; a bulk endpoint would make it atomic
+    for (const timeRange of timeRanges) {
+      await entriesStore.save({ ...entryFields, ...timeRange })
+    }
+    emit('entrySaved', parameters.value)
+  } catch (err) {
+    error.value = err
+  }
+}
+
+function onEntryDate (time) {
+  return moment(parameters.value.date, 'DD-MM-YYYY').hours(time.hours()).minutes(time.minutes())
 }
 
 function toggleCustomOvertime () {
