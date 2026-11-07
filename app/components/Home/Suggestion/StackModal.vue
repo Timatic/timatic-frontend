@@ -7,7 +7,7 @@
       <CloseIcon />
       <span class="text-sm">(Esc)</span>
     </div>
-    <div class="fixed w-full h-full bg-gray-900 opacity-25 top-0 right-0 z-40" />
+    <div class="fixed w-full h-full bg-gray-900 opacity-25 top-0 right-0 z-40" @click="$emit('closeModal', true)" />
     <div class="z-50 top-0 left-0 w-full absolute shadow-lg">
       <suggestion-card
         :suggestion="suggestion"
@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed, onBeforeUnmount, onMounted } from 'vue'
 import Activity from './Activity.vue'
 import CloseIcon from '~/assets/svg/close.svg'
 
@@ -39,11 +39,12 @@ const emit = defineEmits(['closeModal'])
 
 const activities = computed(() => props.suggestion.activities.sortBy('startedAt').all())
 
-onMounted(() => {
-  window.addEventListener('keyup', (e) => {
-    if (e.code === 'Escape') {
-      emit('closeModal', true)
-    }
-  })
-})
+function closeOnEscape (e) {
+  if (e.code === 'Escape') {
+    emit('closeModal', true)
+  }
+}
+
+onMounted(() => window.addEventListener('keyup', closeOnEscape))
+onBeforeUnmount(() => window.removeEventListener('keyup', closeOnEscape))
 </script>

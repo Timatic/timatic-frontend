@@ -63,7 +63,7 @@ export const useEntriesStore = defineStore('entries', () => {
       isInternal: entryFields.settlement === 'internal'
     }
 
-    if (entryFields.ticket !== null) {
+    if (entryFields.ticket) {
       attributes.ticketId = entryFields.ticket.id
       attributes.ticketType = entryFields.ticket.type
       attributes.ticketTitle = entryFields.ticket.title

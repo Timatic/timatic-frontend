@@ -22,9 +22,15 @@
       </template>
     </div>
     <div class="flex-1 my-4 relative">
-      <div class="leading-5 mb-1 text-page-title text-lg font-medium">
-        <p v-for="(event, key) in activity.events" :key="key">
-          {{ event.title }}
+      <p class="leading-5 mb-1 text-page-title text-lg font-medium" style="word-break: break-word">
+        {{ activity.title }}
+      </p>
+      <div v-if="eventTitles.length" class="text-filter-text text-sm leading-5" style="word-break: break-word">
+        <p v-for="eventTitle in eventTitles.slice(0, 3)" :key="eventTitle">
+          {{ eventTitle }}
+        </p>
+        <p v-if="eventTitles.length > 3">
+          {{ $t('moreCount', { count: eventTitles.length - 3 }) }}
         </p>
       </div>
       <div class="flex my-1">
@@ -36,14 +42,20 @@
         </div>
       </div>
     </div>
-    <div class="w-8 flex flex-col justify-between m-4 relative gap-2">
-      <img :src="activity.iconUrl" :alt="activity.sourceId" style="height:20px">
+    <div class="w-8 flex flex-col items-center m-4 relative">
+      <img
+        v-for="(source, index) in sources"
+        :key="source.sourceId"
+        :src="source.iconUrl"
+        :alt="source.sourceId"
+        style="height:20px"
+        :class="{'-mt-1': index > 0}"
+      >
     </div>
   </div>
 </template>
 
 <script setup>
-import moment from 'moment'
 import { computed } from 'vue'
 
 const props = defineProps({
@@ -53,17 +65,11 @@ const props = defineProps({
   }
 })
 
-
 const timeStart = computed(() => props.activity.startedAt.format('HH:mm'))
 const timeEnd = computed(() => props.activity.endedAt.format('HH:mm'))
-const duration = computed(() => {
-  const dur = moment.duration(props.activity.endedAt.diff(props.activity.startedAt))
-  if (dur.asHours() >= 1) {
-    return Math.round(dur.asHours() * 10) / 10 + 'h'
-  } else {
-    return Math.ceil(dur.asMinutes()) + 'm'
-  }
-})
+const sources = computed(() => [props.activity, ...props.activity.events.all()].filter((source, index, all) => all.findIndex(other => other.sourceId === source.sourceId) === index))
+const eventTitles = computed(() => props.activity.events.pluck('title').unique().reject(title => title === props.activity.title).all())
+const duration = computed(() => durationLabel(Math.round(props.activity.endedAt.diff(props.activity.startedAt, 'minutes', true))))
 </script>
 
 <style scoped>

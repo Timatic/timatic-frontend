@@ -20,3 +20,7 @@ export function initials (value: string): string {
 export function currency (value: number): string {
   return numeral(value).format('0,0.00')
 }
+
+export function durationLabel (minutes: number): string {
+  return minutes >= 60 ? Math.round(minutes / 6) / 10 + 'h' : minutes + 'm'
+}

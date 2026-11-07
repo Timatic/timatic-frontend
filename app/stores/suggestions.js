@@ -55,7 +55,10 @@ export const useSuggestionsStore = defineStore('suggestions', () => {
 function getTransformedActivities (rawActivities, rawEvents, rawEventTypes, rawSources) {
   return rawActivities.transform((activity) => {
     const eventIds = collect(activity.relationships.events.data).pluck('id')
-    const events = rawEvents.whereIn('id', eventIds.all()).transform((event) => ({ ...event.attributes }))
+    const events = rawEvents.whereIn('id', eventIds.all()).transform((event) => ({
+      ...event.attributes,
+      iconUrl: rawSources.firstWhere('id', event.attributes.sourceId)?.attributes.iconUrl
+    }))
     const eventTypeId = activity.relationships.eventType.data?.id
     const eventType = eventTypeId ? rawEventTypes.firstWhere('id', eventTypeId) : undefined
 
