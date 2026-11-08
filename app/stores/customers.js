@@ -58,8 +58,7 @@ export const useCustomersStore = defineStore('customers', () => {
         type: 'customers',
         attributes: {
           name: customer.name,
-          hourlyRate: customer.hourlyRate === '' ? null : customer.hourlyRate,
-          isOwnOrganization: customer.isOwnOrganization
+          hourlyRate: customer.hourlyRate === '' ? null : customer.hourlyRate
         },
         relationships: {
           accountManager: { data: customer.accountManagerUserId ? { type: 'users', id: customer.accountManagerUserId } : null }

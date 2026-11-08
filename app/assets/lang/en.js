@@ -179,7 +179,6 @@ export default {
     defaultRate: 'default',
     defaultRatePlaceholder: 'Default: € {rate}',
     accountManager: 'Account manager',
-    isOwnOrganization: 'Own organization',
     delete: 'Delete',
     confirmDelete: 'Delete the customer {name}?',
     saved: 'Customer saved'

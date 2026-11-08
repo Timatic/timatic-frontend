@@ -38,7 +38,7 @@
             class="w-full border border-input-border rounded h-8 px-2 text-right"
           >
         </div>
-        <div class="mb-4">
+        <div>
           <label for="accountManager" class="text-sm leading-5 pb-2">{{ $t('customerForm.accountManager') }}</label>
           <select id="accountManager" v-model="form.accountManagerUserId" class="w-full border border-input-border rounded h-8 px-2">
             <option :value="null">
@@ -49,10 +49,6 @@
             </option>
           </select>
         </div>
-        <label class="flex items-center">
-          <input v-model="form.isOwnOrganization" type="checkbox" class="mr-2">
-          {{ $t('customerForm.isOwnOrganization') }}
-        </label>
       </div>
     </template>
   </base-modal>
@@ -79,8 +75,7 @@ const form = ref({
   externalId: props.customer.externalId,
   name: props.customer.name ?? '',
   hourlyRate: props.customer.hourlyRate ?? '',
-  accountManagerUserId: props.customer.accountManagerUserId ?? null,
-  isOwnOrganization: props.customer.isOwnOrganization ?? false
+  accountManagerUserId: props.customer.accountManagerUserId ?? null
 })
 const error = ref(null)
 
