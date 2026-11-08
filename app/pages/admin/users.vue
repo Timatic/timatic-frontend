@@ -22,10 +22,11 @@
       </template>
     </vue-good-table>
 
-    <EditUserRolesModal
+    <EditUserModal
       v-if="selectedUser"
       :user="selectedUser"
       :roles="roles"
+      :teams="teamsStore.collection.sortBy('name').all()"
       @closeModal="selectedUser = null"
       @saved="onSaved"
     />
@@ -39,12 +40,14 @@ import collect from 'collect.js'
 import { useToast } from 'vue-toast-notification'
 import { getTimaticApi } from '~/utils/timaticApi'
 import { useUsersStore } from '~/stores/users'
+import { useTeamsStore } from '~/stores/teams'
 
 useHead({ title: 'Users - Timatic' })
 
 const { t } = useI18n()
 const toast = useToast()
 const usersStore = useUsersStore()
+const teamsStore = useTeamsStore()
 
 const users = ref([])
 const roles = ref([])
@@ -54,18 +57,20 @@ const columns = [
   { label: t('admin.users.email'), field: 'email' },
   { label: t('admin.users.firstName'), field: 'givenName' },
   { label: t('admin.users.lastName'), field: 'familyName' },
+  { label: t('admin.users.team'), field: 'teamName' },
   { label: t('admin.users.roles'), field: 'roleNames', sortable: false }
 ]
 
 const rows = computed(() => users.value.map(user => ({
   ...user,
-  roleNames: user.roles.map(role => role.name).join(' ')
+  roleNames: user.roles.map(role => role.name).join(' '),
+  teamName: teamsStore.getById(user.teamId)?.name ?? ''
 })))
 
 onMounted(async () => {
   const api = getTimaticApi()
   const [usersResponse, rolesResponse] = await Promise.all([
-    api.$get('users', { params: { include: 'roles', page: { size: 1000 } } }),
+    api.$get('users', { params: { include: 'roles,team', page: { size: 1000 } } }),
     api.$get('roles', { params: { page: { size: 1000 } } })
   ])
 
@@ -74,6 +79,7 @@ onMounted(async () => {
   users.value = usersResponse.data.map(user => ({
     id: user.id,
     ...user.attributes,
+    teamId: user.relationships.team.data?.id ?? null,
     roles: user.relationships.roles.data.map(({ id }) => ({ id, name: includedRoles.firstWhere('id', id).attributes.name }))
   }))
 })
@@ -87,6 +93,6 @@ function editUser ({ row }) {
 function onSaved (savedUser) {
   users.value = users.value.map(user => user.id === savedUser.id ? savedUser : user)
   selectedUser.value = null
-  toast.success(t('admin.users.rolesSaved'))
+  toast.success(t('admin.users.saved'))
 }
 </script>
