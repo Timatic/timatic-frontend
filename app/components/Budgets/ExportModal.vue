@@ -104,7 +104,7 @@ onMounted(() => {
 
   const api = getTimaticApi()
   api.$get('export-formats').then((response) => {
-    exportTypes.value = response.data.map(format => ({
+    exportTypes.value = response.data.filter(format => format.attributes.periodOptions !== 'month-range').map(format => ({
       key: format.id,
       label: format.attributes.label,
       periodOptions: format.attributes.periodOptions,
