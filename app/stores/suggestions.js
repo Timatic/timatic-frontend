@@ -15,7 +15,7 @@ export const useSuggestionsStore = defineStore('suggestions', () => {
       params: {
         page: { size: 1000 },
         filter: params,
-        include: 'activities.events.source,activities.eventType'
+        include: 'activities.events.source,activities.events.eventType'
       }
     })
 
@@ -59,15 +59,15 @@ function getTransformedActivities (rawActivities, rawEvents, rawEventTypes, rawS
       ...event.attributes,
       iconUrl: rawSources.firstWhere('id', event.attributes.sourceId)?.attributes.iconUrl
     }))
-    const eventTypeId = activity.relationships.eventType.data?.id
-    const eventType = eventTypeId ? rawEventTypes.firstWhere('id', eventTypeId) : undefined
+    const eventTypeIds = events.sortBy('startedAt').pluck('eventTypeId').unique()
 
     return {
       id: activity.id,
       ...activity.attributes,
       startedAt: moment(activity.attributes.startedAt),
       endedAt: moment(activity.attributes.endedAt),
-      eventTypeName: eventType?.attributes.name,
+      eventTypeNames: eventTypeIds.map(id => rawEventTypes.firstWhere('id', id)?.attributes.name).filter().join(', '),
+      isTicketTagged: eventTypeIds.contains('ticket_tagged'),
       iconUrl: rawSources.firstWhere('id', activity.attributes.sourceId)?.attributes.iconUrl,
       events
     }

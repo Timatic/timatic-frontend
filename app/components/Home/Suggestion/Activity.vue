@@ -35,9 +35,9 @@
       </div>
       <div class="flex my-1">
         <div class="flex-grow leading-5 mt-1">
-          {{ activity.eventTypeName }}
+          {{ activity.eventTypeNames }}
         </div>
-        <div v-if="activity.eventTypeId === 'ticket_tagged'" class="flex-grow text-right tagged">
+        <div v-if="activity.isTicketTagged" class="flex-grow text-right tagged">
           <span class="circle">@</span> tagged
         </div>
       </div>
