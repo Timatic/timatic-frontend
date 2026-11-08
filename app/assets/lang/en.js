@@ -170,5 +170,26 @@ export default {
   allowedUsers: 'Allowed users',
   filterBudgetTitleOrChangeNumber: 'Filter budget title or change number',
   everyone: 'Everyone',
-  documentSentByMail: 'You will receive the document by mail'
+  documentSentByMail: 'You will receive the document by mail',
+  shareLink: {
+    share: 'Share',
+    title: 'Share with customer',
+    explanation: 'Anyone with the link sees this budget\'s hours and description, without logging in. Entries and prices stay hidden.',
+    hiddenFromCustomer: 'Only budgets shown to the customer can be shared. Turn on "Show to customer" in the budget first.',
+    close: 'Close',
+    regenerateWarning: 'This budget is shared. A new link stops the current link from working.',
+    generate: 'Create link',
+    regenerate: 'Create new link',
+    copyNow: 'Copy the link now, it is shown only once.',
+    copy: 'Copy',
+    copied: 'Link copied',
+    copyFailed: 'Copying failed, select the link and copy it yourself.',
+    revoke: 'Revoke link',
+    revokeConfirm: 'Revoke the link? The customer can no longer open it.',
+    revoked: 'Link revoked'
+  },
+  sharedBudget: {
+    invalidLink: 'This link is no longer valid.',
+    loadFailed: 'This budget could not be loaded. Please try again later.'
+  }
 }

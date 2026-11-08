@@ -12,7 +12,7 @@ const PUBLIC_PATHS = ['/login', '/auth/callback', '/health']
  * They get this app's own screen and decide for themselves.
  */
 export default defineNuxtRouteMiddleware(async (to) => {
-  if (PUBLIC_PATHS.includes(to.path)) {
+  if (PUBLIC_PATHS.includes(to.path) || to.meta.public) {
     return
   }
 

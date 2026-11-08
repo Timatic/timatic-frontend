@@ -44,7 +44,7 @@
                 class="border border-input-border text-action-button py-2 px-10 rounded font-normal h-12 mr-4"
                 @click.prevent="$emit('closeModal')"
               >
-                {{ $t('cancel') }}
+                {{ cancelLabel || $t('cancel') }}
               </button>
               <slot name="submit-button">
                 <button class="bg-action-button py-2 px-10 rounded text-white font-normal h-12" type="submit">
@@ -83,6 +83,11 @@ const props = defineProps({
     type: Error,
     required: false,
     default: null
+  },
+  cancelLabel: {
+    type: String,
+    required: false,
+    default: null
   }
 })
 
@@ -97,6 +102,10 @@ const hasFooterButtonsLeftSlot = computed(() => !!slots['footer-left'])
 watch(() => props.apiError, (apiError) => {
   errors.value = []
 
+  if (!apiError) {
+    return
+  }
+
   if (!apiError.response) {
     console.error(apiError)
     errors.value = [apiError.request?.status ?? 'Unknown error']
@@ -107,7 +116,7 @@ watch(() => props.apiError, (apiError) => {
     if (apiError.response.status === 403) {
       errors.value = ['You don\'t have the required permissions for this action']
     } else {
-      errors.value = [apiError.response.status + ' API error']
+      errors.value = [apiError.response.data.message || apiError.response.status + ' API error']
     }
     return
   }
