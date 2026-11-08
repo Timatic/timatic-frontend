@@ -54,7 +54,7 @@ export function getTimaticApi () {
           .then(({ useAuthStore }) => useAuthStore().reauthenticate(window.location.pathname + window.location.search))
           .then(() => Promise.reject(error))
       }
-      console.error(error)
+      console.error(error.message, error.response?.status)
       return Promise.reject(error)
     }
   )

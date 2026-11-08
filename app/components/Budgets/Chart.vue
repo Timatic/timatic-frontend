@@ -18,6 +18,8 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['loadFailed'])
+
 const periodUnit = computed(() => {
   const budgetDurationInWeeks = props.budget.endedAt.diff(props.budget.startedAt, 'week')
   return budgetDurationInWeeks > 20 ? 'month' : 'week'
@@ -80,6 +82,6 @@ onMounted(() => {
       y: point.remainingMinutes / 60
     })).all()
     chart.update()
-  })
+  }).catch(error => emit('loadFailed', error))
 })
 </script>

@@ -198,11 +198,10 @@
                 <div class="font-medium">
                   {{ $t('description') }}
                 </div>
-                <!-- eslint-disable-next-line vue/no-v-html -->
-                <div v-html="budgetDescription" />
+                <div class="whitespace-pre-line">{{ activePeriod.budgetDescription }}</div>
               </div>
               <div v-if="budget.renewalFrequency === null" class="order-3 row-span-2">
-                <chart :budget="budget" />
+                <chart :budget="budget" @load-failed="showSharedLoadError" />
               </div>
             </div>
           </div>
@@ -394,11 +393,6 @@ const canEditBudget = computed(() => usersStore.canEditBudget && !budget.value.i
 const periodIsOpen = computed(() => activePeriod.value.endDate > moment().subtract(1, 'month') && !budget.value.isArchived)
 const periodExportLink = computed(() => 'budgets/' + budget.value.id + '/entries-export')
 
-const budgetDescription = computed(() => {
-  if (!activePeriod.value.budgetDescription) return ''
-  return activePeriod.value.budgetDescription.replace(/(\r\n|\r|\n)/g, '<br>')
-})
-
 const rows = computed(() => {
   if (entries.value === null) return []
 
@@ -495,9 +489,13 @@ function loadSharedBudget () {
       sharedBudgetType.value = { ...budgetType, hasRenewalFrequency: budgetType.renewalFrequencies.length > 0 }
       sharedBudget.value = parseJsonApiDataToBudgets([response.data], response.included).first()
     })
-    .catch((error) => {
-      loadError.value = error.response?.status === 401 ? 'sharedBudget.invalidLink' : 'sharedBudget.loadFailed'
-    })
+    .catch(showSharedLoadError)
+}
+
+function showSharedLoadError (error) {
+  if (props.isPublic) {
+    loadError.value = error.response?.status === 401 ? 'sharedBudget.invalidLink' : 'sharedBudget.loadFailed'
+  }
 }
 
 function loadEntries () {
@@ -551,7 +549,7 @@ function loadPeriods () {
     if (!props.isPublic) {
       loadEntries()
     }
-  })
+  }).catch(showSharedLoadError)
 }
 </script>
 

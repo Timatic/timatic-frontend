@@ -21,14 +21,21 @@ const budgetsStore = useBudgetsStore()
 const budgetTypesStore = useBudgetTypesStore()
 const teamsStore = useTeamsStore()
 
-if (authStore.isAuthenticated && !route.meta.public) {
+let booted = false
+
+// A share link visitor may hold an account token too; the app's data loads only once they reach an internal page.
+watch(() => route.meta.public, (isPublic) => {
+  if (booted || isPublic || !authStore.isAuthenticated) {
+    return
+  }
+  booted = true
   usersStore.login()
   customersStore.fetch()
   budgetsStore.fetch()
   budgetTypesStore.fetch()
   teamsStore.fetch()
   usersStore.fetch()
-}
+}, { immediate: true })
 </script>
 
 <style>
