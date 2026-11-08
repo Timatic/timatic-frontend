@@ -113,6 +113,11 @@ watch(() => props.apiError, (apiError) => {
   }
 
   const apiErrors = apiError.response.data.errors
+  // Plain Laravel endpoints answer validation errors as { field: [messages] } instead of a JSON:API array
+  if (!Array.isArray(apiErrors)) {
+    errors.value = Object.values(apiErrors).flat()
+    return
+  }
   for (const err of apiErrors) {
     const error = err.source.pointer.replace('/data/attributes/', '') + ': ' +
       err.detail.replace('validation.', '')
