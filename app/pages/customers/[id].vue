@@ -11,6 +11,22 @@
               {{ customer.isArchived ? '- Archived' : '' }}
             </div>
           </div>
+          <div class="flex">
+            <button
+              v-if="usersStore.can('customers.delete')"
+              class="border border-input-border text-action-button py-2 px-10 rounded font-normal h-12 mr-4"
+              @click="deleteCustomer"
+            >
+              {{ $t('customerForm.delete') }}
+            </button>
+            <button
+              v-if="usersStore.can('customers.update')"
+              class="bg-action-button py-2 px-10 rounded text-white font-normal h-12"
+              @click="showModal.customer = true"
+            >
+              {{ $t('edit') }}
+            </button>
+          </div>
         </div>
 
         <div class="flex my-4 p-6 box-shadow justify-between bg-white">
@@ -44,19 +60,58 @@
             @row-click="onBudgetClick"
           />
         </div>
+
+        <div class="pb-8 text-page-title">
+          <div class="flex justify-between items-center pb-4">
+            <div class="text-xl text-table-title leading-8">{{ $t('trackedDomains.title') }}</div>
+            <button
+              v-if="usersStore.can('customers.update')"
+              class="border border-input-border text-action-button py-2 px-10 rounded font-normal h-12"
+              @click="showModal.trackedDomain = true"
+            >
+              {{ $t('trackedDomains.add') }}
+            </button>
+          </div>
+          <vue-good-table :columns="trackedDomainColumns" :rows="trackedDomainRows">
+            <template #table-row="props">
+              <button
+                v-if="props.column.field === 'actions'"
+                class="text-action-button"
+                @click="deleteTrackedDomain(props.row)"
+              >
+                {{ $t('customerForm.delete') }}
+              </button>
+              <span v-else>{{ props.formattedRow[props.column.field] }}</span>
+            </template>
+          </vue-good-table>
+        </div>
       </div>
     </div>
+    <CustomerModal
+      v-if="showModal.customer"
+      :customer="customer"
+      @closeModal="showModal.customer = false"
+      @saved="showModal.customer = false"
+    />
+    <TrackedDomainModal
+      v-if="showModal.trackedDomain"
+      :customer-id="route.params.id"
+      :budgets="customerBudgets"
+      @closeModal="showModal.trackedDomain = false"
+      @saved="onTrackedDomainSaved"
+    />
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from '#app'
 import InfoIcon from '~/assets/svg/info.svg'
 import { useCustomersStore } from '~/stores/customers'
 import { useBudgetsStore } from '~/stores/budgets'
 import { useUsersStore } from '~/stores/users'
+import { getTimaticApi } from '~/utils/timaticApi'
 
 useHead({ title: 'Customer - Timatic' })
 
@@ -75,6 +130,54 @@ const budgetColumns = computed(() => [
   { label: t('description'), field: 'title' },
   { label: t('budgetType'), field: 'budgetTypeId' }
 ])
+
+const showModal = ref({ customer: false, trackedDomain: false })
+const trackedDomains = ref([])
+
+const trackedDomainColumns = computed(() => [
+  { label: t('trackedDomains.domain'), field: 'url' },
+  { label: t('trackedDomains.budget'), field: 'budgetTitle' },
+  { label: t('trackedDomains.internal'), field: 'internal' },
+  ...(usersStore.can('tracked-domains.delete') ? [{ label: '', field: 'actions', sortable: false }] : [])
+])
+const trackedDomainRows = computed(() => trackedDomains.value.map(trackedDomain => ({
+  ...trackedDomain,
+  url: trackedDomain.domain + (trackedDomain.path ?? ''),
+  budgetTitle: trackedDomain.budgetId
+    ? budgetsStore.collection.firstWhere('id', String(trackedDomain.budgetId))?.title
+    : t('trackedDomains.paidPerHour'),
+  internal: trackedDomain.isInternal ? t('yes') : ''
+})))
+
+onMounted(async () => {
+  const response = await getTimaticApi().$get('tracked-domains', {
+    params: { filter: { customerId: route.params.id, shared: 1 }, page: { size: 1000 } }
+  })
+  trackedDomains.value = response.data.map(item => ({ id: item.id, ...item.attributes }))
+})
+
+function onTrackedDomainSaved (trackedDomain) {
+  trackedDomains.value = [...trackedDomains.value, { id: trackedDomain.id, ...trackedDomain.attributes }]
+  customersStore.updateTrackedDomainsCount(route.params.id, trackedDomains.value.length)
+  showModal.value.trackedDomain = false
+}
+
+async function deleteTrackedDomain (trackedDomain) {
+  if (!window.confirm(t('trackedDomains.confirmDelete', { domain: trackedDomain.url }))) {
+    return
+  }
+  await getTimaticApi().$delete('tracked-domains/' + trackedDomain.id)
+  trackedDomains.value = trackedDomains.value.filter(item => item.id !== trackedDomain.id)
+  customersStore.updateTrackedDomainsCount(route.params.id, trackedDomains.value.length)
+}
+
+async function deleteCustomer () {
+  if (!window.confirm(t('customerForm.confirmDelete', { name: customer.value.name }))) {
+    return
+  }
+  await customersStore.remove(customer.value.id)
+  router.push({ path: '/customers/' })
+}
 
 function linkBack () {
   router.push({ path: '/customers/' })

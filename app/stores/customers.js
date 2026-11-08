@@ -8,6 +8,19 @@ const colors = [
   '28bc9a', '38cc76', '3b99da', '9b5cb3', '354a5d', 'f19b2e', 'd05518', 'bd3933', 'bcc3c9', '818c8e'
 ]
 
+function parseCustomer (customer) {
+  let color = colors[customer.id % 20]
+  if (customer.attributes.isOwnOrganization) {
+    color = '3081b8'
+  }
+  return {
+    id: customer.id,
+    color,
+    ...customer.attributes,
+    accountManagerUserId: customer.relationships?.accountManager?.data?.id
+  }
+}
+
 export const useCustomersStore = defineStore('customers', () => {
   const customers = shallowRef(collect())
 
@@ -28,18 +41,7 @@ export const useCustomersStore = defineStore('customers', () => {
     })
 
     customers.value = customers.value.merge(
-      collect(response.data).transform((customer) => {
-        let color = colors[customer.id % 20]
-        if (customer.attributes.isOwnOrganization) {
-          color = '3081b8'
-        }
-        return {
-          id: customer.id,
-          color,
-          ...customer.attributes,
-          accountManagerUserId: customer.relationships.accountManager.data?.id
-        }
-      }).all()
+      collect(response.data).transform(parseCustomer).all()
     ).unique('id')
 
     if (response.links.next) {
@@ -49,5 +51,41 @@ export const useCustomersStore = defineStore('customers', () => {
     return response
   }
 
-  return { customers, collection, getById, getByExternalId, fetch }
+  async function save (customer) {
+    const api = getTimaticApi()
+    const body = {
+      data: {
+        type: 'customers',
+        attributes: {
+          name: customer.name,
+          hourlyRate: customer.hourlyRate === '' ? null : customer.hourlyRate,
+          isOwnOrganization: customer.isOwnOrganization
+        },
+        relationships: {
+          accountManager: { data: customer.accountManagerUserId ? { type: 'users', id: customer.accountManagerUserId } : null }
+        }
+      }
+    }
+    const config = { params: { include: 'accountManager' } }
+    const response = customer.id
+      ? await api.$patch('customers/' + customer.id, body, config)
+      : await api.$post('customers', body, config)
+
+    const saved = parseCustomer(response.data)
+    saved.trackedDomainsCount = getById.value(saved.id)?.trackedDomainsCount ?? 0
+    customers.value = customers.value.reject(item => item.id === saved.id).push(saved)
+
+    return saved
+  }
+
+  async function remove (id) {
+    await getTimaticApi().$delete('customers/' + id)
+    customers.value = customers.value.reject(item => item.id === id)
+  }
+
+  function updateTrackedDomainsCount (id, count) {
+    customers.value = customers.value.map(item => item.id === id ? { ...item, trackedDomainsCount: count } : item)
+  }
+
+  return { customers, collection, getById, getByExternalId, fetch, save, remove, updateTrackedDomainsCount }
 })
