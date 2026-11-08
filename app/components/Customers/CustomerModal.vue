@@ -38,6 +38,10 @@
             class="w-full border border-input-border rounded h-8 px-2 text-right"
           >
         </div>
+        <div class="mb-4">
+          <label for="color" class="text-sm leading-5 pb-2 block">{{ $t('customerForm.color') }}</label>
+          <input id="color" v-model="color" type="color" class="h-8 w-16 border border-input-border rounded">
+        </div>
         <div>
           <label for="accountManager" class="text-sm leading-5 pb-2">{{ $t('customerForm.accountManager') }}</label>
           <select id="accountManager" v-model="form.accountManagerUserId" class="w-full border border-input-border rounded h-8 px-2">
@@ -75,7 +79,13 @@ const form = ref({
   externalId: props.customer.externalId,
   name: props.customer.name ?? '',
   hourlyRate: props.customer.hourlyRate ?? '',
-  accountManagerUserId: props.customer.accountManagerUserId ?? null
+  accountManagerUserId: props.customer.accountManagerUserId ?? null,
+  color: props.customer.color ?? '3081b8'
+})
+// The native color input works with #rrggbb, the API with rrggbb
+const color = computed({
+  get: () => '#' + form.value.color,
+  set: (value) => { form.value.color = value.replace('#', '').toLowerCase() }
 })
 const error = ref(null)
 

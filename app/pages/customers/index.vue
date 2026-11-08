@@ -36,6 +36,10 @@
                 >
                   <WarningIcon class="mr-1" /> 0
                 </span>
+                <span v-else-if="props.column.field === 'name'" class="inline-flex items-center">
+                  <span class="inline-block w-3 h-3 rounded-full mr-2" :style="{ backgroundColor: '#' + props.row.color }" />
+                  {{ props.row.name }}
+                </span>
                 <span v-else>{{ props.formattedRow[props.column.field] }}</span>
               </template>
             </vue-good-table>

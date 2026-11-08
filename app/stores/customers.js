@@ -8,15 +8,16 @@ const colors = [
   '28bc9a', '38cc76', '3b99da', '9b5cb3', '354a5d', 'f19b2e', 'd05518', 'bd3933', 'bcc3c9', '818c8e'
 ]
 
+// A customer without a color of its own keeps the one it always had
+function fallbackColor (customer) {
+  return customer.attributes.isOwnOrganization ? '3081b8' : colors[customer.id % 20]
+}
+
 function parseCustomer (customer) {
-  let color = colors[customer.id % 20]
-  if (customer.attributes.isOwnOrganization) {
-    color = '3081b8'
-  }
   return {
     id: customer.id,
-    color,
     ...customer.attributes,
+    color: customer.attributes.color ?? fallbackColor(customer),
     accountManagerUserId: customer.relationships?.accountManager?.data?.id
   }
 }
@@ -58,7 +59,8 @@ export const useCustomersStore = defineStore('customers', () => {
         type: 'customers',
         attributes: {
           name: customer.name,
-          hourlyRate: customer.hourlyRate === '' ? null : customer.hourlyRate
+          hourlyRate: customer.hourlyRate === '' ? null : customer.hourlyRate,
+          color: customer.color
         },
         relationships: {
           accountManager: { data: customer.accountManagerUserId ? { type: 'users', id: customer.accountManagerUserId } : null }

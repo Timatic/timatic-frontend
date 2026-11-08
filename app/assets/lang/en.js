@@ -176,6 +176,7 @@ export default {
     edit: 'Edit customer',
     name: 'Name',
     hourlyRate: 'Hourly rate',
+    color: 'Color',
     defaultRate: 'default',
     defaultRatePlaceholder: 'Default: € {rate}',
     accountManager: 'Account manager',

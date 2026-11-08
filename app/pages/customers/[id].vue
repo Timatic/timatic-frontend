@@ -7,6 +7,7 @@
           <div class="flex-grow flex justify-start items-center">
             <ArrowBack @click="linkBack" />
             <div class="text-2xl flex-1 text-page-title leading-8 font-bold text-rubik pl-3">
+              <span class="inline-block w-4 h-4 rounded-full mr-2" :style="{ backgroundColor: '#' + customer.color }" />
               <span :class="{archived: customer.isArchived} ">{{ customer.name }}</span>
               {{ customer.isArchived ? '- Archived' : '' }}
             </div>
