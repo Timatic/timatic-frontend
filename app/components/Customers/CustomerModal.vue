@@ -34,6 +34,7 @@
             type="number"
             min="0"
             step=".01"
+            :placeholder="$t('customerForm.defaultRatePlaceholder', { rate: settingsStore.settings.defaultHourlyRate })"
             class="w-full border border-input-border rounded h-8 px-2 text-right"
           >
         </div>
@@ -61,6 +62,7 @@
 import { ref, computed } from 'vue'
 import { useCustomersStore } from '~/stores/customers'
 import { useUsersStore } from '~/stores/users'
+import { useSettingsStore } from '~/stores/settings'
 
 const props = defineProps({
   customer: { type: Object, default: () => ({}) }
@@ -70,6 +72,7 @@ const emit = defineEmits(['closeModal', 'saved'])
 
 const customersStore = useCustomersStore()
 const usersStore = useUsersStore()
+const settingsStore = useSettingsStore()
 
 const form = ref({
   id: props.customer.id,

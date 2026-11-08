@@ -11,6 +11,7 @@ import { useCustomersStore } from '~/stores/customers'
 import { useBudgetsStore } from '~/stores/budgets'
 import { useBudgetTypesStore } from '~/stores/budgetTypes'
 import { useTeamsStore } from '~/stores/teams'
+import { useSettingsStore } from '~/stores/settings'
 
 const authStore = useAuthStore()
 const usersStore = useUsersStore()
@@ -18,6 +19,7 @@ const customersStore = useCustomersStore()
 const budgetsStore = useBudgetsStore()
 const budgetTypesStore = useBudgetTypesStore()
 const teamsStore = useTeamsStore()
+const settingsStore = useSettingsStore()
 
 if (authStore.isAuthenticated) {
   usersStore.login()

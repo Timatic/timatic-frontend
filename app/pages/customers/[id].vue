@@ -47,7 +47,10 @@
             </div>
             <div class="flex justify-start items-center text-page-title">
               <div class="w-1/2 font-medium">{{ $t('hourlyRate') }}</div>
-              <div class="w-1/2">&euro; {{ customer.hourlyRate }}</div>
+              <div class="w-1/2">
+                <template v-if="customer.hourlyRate !== null">&euro; {{ customer.hourlyRate }}</template>
+                <template v-else>&euro; {{ settingsStore.settings.defaultHourlyRate }} ({{ $t('customerForm.defaultRate') }})</template>
+              </div>
             </div>
           </div>
         </div>
@@ -111,6 +114,7 @@ import InfoIcon from '~/assets/svg/info.svg'
 import { useCustomersStore } from '~/stores/customers'
 import { useBudgetsStore } from '~/stores/budgets'
 import { useUsersStore } from '~/stores/users'
+import { useSettingsStore } from '~/stores/settings'
 import { getTimaticApi } from '~/utils/timaticApi'
 
 useHead({ title: 'Customer - Timatic' })
@@ -121,6 +125,7 @@ const router = useRouter()
 const customersStore = useCustomersStore()
 const budgetsStore = useBudgetsStore()
 const usersStore = useUsersStore()
+const settingsStore = useSettingsStore()
 
 const customer = computed(() => customersStore.collection.firstWhere('id', route.params.id) || { name: 'loading' })
 const customerBudgets = computed(() => budgetsStore.collection ? budgetsStore.collection.where('customerId', route.params.id).all() : [])
