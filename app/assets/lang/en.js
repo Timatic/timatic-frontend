@@ -179,8 +179,9 @@ export default {
       firstName: 'First name',
       lastName: 'Last name',
       roles: 'Roles',
-      editRoles: 'Edit roles of {name}',
-      rolesSaved: 'Roles saved'
+      team: 'Team',
+      edit: 'Edit {name}',
+      saved: 'User saved'
     },
     roles: {
       title: 'Roles',

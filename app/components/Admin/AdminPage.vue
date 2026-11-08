@@ -12,7 +12,7 @@
             :key="item.path"
             :to="item.path"
             class="block py-1 text-filter-text"
-            active-class="active-menu"
+            active-class="font-bold text-page-title"
           >
             {{ $t(item.label) }}
           </NuxtLink>
