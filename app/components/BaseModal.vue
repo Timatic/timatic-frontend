@@ -107,7 +107,7 @@ watch(() => props.apiError, (apiError) => {
     if (apiError.response.status === 403) {
       errors.value = ['You don\'t have the required permissions for this action']
     } else {
-      errors.value = [apiError.response.status + ' API error']
+      errors.value = [apiError.response.data.message || apiError.response.status + ' API error']
     }
     return
   }

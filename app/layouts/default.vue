@@ -12,6 +12,8 @@ import { useBudgetsStore } from '~/stores/budgets'
 import { useBudgetTypesStore } from '~/stores/budgetTypes'
 import { useTeamsStore } from '~/stores/teams'
 
+const route = useRoute()
+
 const authStore = useAuthStore()
 const usersStore = useUsersStore()
 const customersStore = useCustomersStore()
@@ -19,7 +21,7 @@ const budgetsStore = useBudgetsStore()
 const budgetTypesStore = useBudgetTypesStore()
 const teamsStore = useTeamsStore()
 
-if (authStore.isAuthenticated) {
+if (authStore.isAuthenticated && !route.meta.public) {
   usersStore.login()
   customersStore.fetch()
   budgetsStore.fetch()

@@ -3,6 +3,14 @@ import * as qs from 'qs'
 import { readToken } from '~/utils/tokenStorage'
 
 let _instance = null
+let _shareToken = null
+
+/**
+ * A visitor of a budget's share link reads the api with its token instead of an account.
+ */
+export function setShareToken (token) {
+  _shareToken = token
+}
 
 export function getTimaticApi () {
   if (_instance) {
@@ -24,6 +32,11 @@ export function getTimaticApi () {
   instance.$delete = (url, config) => instance.delete(url, config).then(r => r.data)
 
   instance.interceptors.request.use((config) => {
+    if (_shareToken) {
+      config.headers['X-Share-Token'] = _shareToken
+      return config
+    }
+
     const token = readToken()
 
     if (token) {
@@ -36,7 +49,7 @@ export function getTimaticApi () {
   instance.interceptors.response.use(
     response => response,
     (error) => {
-      if (error.response?.status === 401) {
+      if (error.response?.status === 401 && !_shareToken) {
         return import('~/stores/auth')
           .then(({ useAuthStore }) => useAuthStore().reauthenticate(window.location.pathname + window.location.search))
           .then(() => Promise.reject(error))

@@ -161,6 +161,24 @@ export const useBudgetsStore = defineStore('budgets', () => {
     return result
   }
 
+  async function createShareLink (budgetId) {
+    const api = getTimaticApi()
+    const result = await api.$post(`budgets/${budgetId}/share-link`)
+    setIsShared(budgetId, true)
+
+    return result.data.attributes.url
+  }
+
+  async function revokeShareLink (budgetId) {
+    const api = getTimaticApi()
+    await api.$delete(`budgets/${budgetId}/share-link`)
+    setIsShared(budgetId, false)
+  }
+
+  function setIsShared (budgetId, isShared) {
+    budgets.value = budgets.value.map(budget => budget.id === budgetId ? { ...budget, isShared } : budget)
+  }
+
   return {
     budgets,
     loadingBudgets,
@@ -173,7 +191,9 @@ export const useBudgetsStore = defineStore('budgets', () => {
     fetchOne,
     create,
     update,
-    close
+    close,
+    createShareLink,
+    revokeShareLink
   }
 })
 
