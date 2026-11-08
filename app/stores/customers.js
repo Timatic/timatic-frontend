@@ -3,7 +3,7 @@ import { ref, shallowRef, computed } from 'vue'
 import collect from 'collect.js'
 import { getTimaticApi } from '~/utils/timaticApi'
 
-const colors = [
+export const colors = [
   '24a086', '30ac63', '3081b8', '8c48ab', '2e3f51', 'f0c430', 'e47f31', 'e47f31', 'ecf0f1', '96a6a6',
   '28bc9a', '38cc76', '3b99da', '9b5cb3', '354a5d', 'f19b2e', 'd05518', 'bd3933', 'bcc3c9', '818c8e'
 ]
@@ -73,7 +73,6 @@ export const useCustomersStore = defineStore('customers', () => {
       : await api.$post('customers', body, config)
 
     const saved = parseCustomer(response.data)
-    saved.trackedDomainsCount = getById.value(saved.id)?.trackedDomainsCount ?? 0
     customers.value = customers.value.reject(item => item.id === saved.id).push(saved)
 
     return saved
@@ -84,9 +83,5 @@ export const useCustomersStore = defineStore('customers', () => {
     customers.value = customers.value.reject(item => item.id === id)
   }
 
-  function updateTrackedDomainsCount (id, count) {
-    customers.value = customers.value.map(item => item.id === id ? { ...item, trackedDomainsCount: count } : item)
-  }
-
-  return { customers, collection, getById, getByExternalId, fetch, save, remove, updateTrackedDomainsCount }
+  return { customers, collection, getById, getByExternalId, fetch, save, remove }
 })

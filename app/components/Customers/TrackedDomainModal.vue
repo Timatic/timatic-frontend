@@ -31,41 +31,50 @@
             {{ $t('trackedDomains.pathHelp') }}
           </p>
         </div>
-        <div class="mb-4">
-          <label for="budget" class="text-sm leading-5 pb-2">{{ $t('trackedDomains.budget') }}</label>
-          <select id="budget" v-model="form.budgetId" class="w-full border border-input-border rounded h-8 px-2">
-            <option :value="null">
-              {{ $t('trackedDomains.paidPerHour') }}
-            </option>
-            <option v-for="budget in budgets" :key="budget.id" :value="budget.id">
-              {{ budget.title }}
-            </option>
-          </select>
-          <p class="text-sm text-label">
-            {{ $t('trackedDomains.budgetHelp') }}
-          </p>
+        <div class="font-roboto font-medium text-black">
+          {{ $t('settlement') }}
         </div>
-        <label class="flex items-center">
-          <input v-model="form.isInternal" type="checkbox" class="mr-2">
-          {{ $t('trackedDomains.internal') }}
-        </label>
+        <div class="flex justify-between items-center py-2">
+          <div class="w-1-8">
+            <div class="radio-wrapper">
+              <input id="paid" v-model="form.settlement" class="radio" type="radio" value="paid" name="settlement">
+              <span class="radio-checkmark" />
+            </div>
+          </div>
+          <div class="w-7-8">
+            <budget-select v-model="form.budget" :customer-id="budgetCustomerId" :disabled="form.settlement !== 'paid'" />
+          </div>
+        </div>
+        <div class="flex justify-between items-center">
+          <div class="w-1-8">
+            <div class="radio-wrapper">
+              <input id="internal" v-model="form.settlement" class="radio" type="radio" value="internal" name="settlement">
+              <span class="radio-checkmark" />
+            </div>
+          </div>
+          <div class="w-7-8">
+            <label class="leading-5 font-roboto" for="internal">{{ $t('internal') }}</label>
+          </div>
+        </div>
       </div>
     </template>
   </base-modal>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { getTimaticApi } from '~/utils/timaticApi'
 
 const props = defineProps({
-  customerId: { type: String, required: true },
-  budgets: { type: Array, required: true }
+  customerId: { type: String, required: true }
 })
 
 const emit = defineEmits(['closeModal', 'saved'])
 
-const form = ref({ domain: '', path: '', budgetId: null, isInternal: false })
+const form = ref({ domain: '', path: '', settlement: 'paid', budget: null })
+// budget-select loads the budgets when its customer changes, so it gets the customer once mounted
+const budgetCustomerId = ref(null)
+onMounted(() => { budgetCustomerId.value = props.customerId })
 const error = ref(null)
 
 // Same normalisation as TrackedDomain::normalise(): a bare lowercase host without www, the path apart
@@ -97,8 +106,10 @@ async function submit () {
           domain: form.value.domain,
           path: form.value.path || null,
           customerId: props.customerId,
-          budgetId: form.value.budgetId ? Number(form.value.budgetId) : null,
-          isInternal: form.value.isInternal
+          budgetId: form.value.settlement === 'paid' && form.value.budget && form.value.budget.id !== 'paidPerHour'
+            ? Number(form.value.budget.id)
+            : null,
+          isInternal: form.value.settlement === 'internal'
         }
       }
     })

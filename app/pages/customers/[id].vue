@@ -100,7 +100,6 @@
     <TrackedDomainModal
       v-if="showModal.trackedDomain"
       :customer-id="route.params.id"
-      :budgets="customerBudgets"
       @closeModal="showModal.trackedDomain = false"
       @saved="onTrackedDomainSaved"
     />
@@ -142,17 +141,17 @@ const trackedDomains = ref([])
 
 const trackedDomainColumns = computed(() => [
   { label: t('trackedDomains.domain'), field: 'url' },
-  { label: t('trackedDomains.budget'), field: 'budgetTitle' },
-  { label: t('trackedDomains.internal'), field: 'internal' },
+  { label: t('settlement'), field: 'settlement' },
   ...(usersStore.can('tracked-domains.delete') ? [{ label: '', field: 'actions', sortable: false }] : [])
 ])
 const trackedDomainRows = computed(() => trackedDomains.value.map(trackedDomain => ({
   ...trackedDomain,
   url: trackedDomain.domain + (trackedDomain.path ?? ''),
-  budgetTitle: trackedDomain.budgetId
-    ? budgetsStore.collection.firstWhere('id', String(trackedDomain.budgetId))?.title
-    : t('trackedDomains.paidPerHour'),
-  internal: trackedDomain.isInternal ? t('yes') : ''
+  settlement: trackedDomain.isInternal
+    ? t('internal')
+    : (trackedDomain.budgetId
+        ? budgetsStore.collection.firstWhere('id', String(trackedDomain.budgetId))?.title
+        : t('trackedDomains.paidPerHour'))
 })))
 
 onMounted(async () => {
@@ -164,7 +163,6 @@ onMounted(async () => {
 
 function onTrackedDomainSaved (trackedDomain) {
   trackedDomains.value = [...trackedDomains.value, { id: trackedDomain.id, ...trackedDomain.attributes }]
-  customersStore.updateTrackedDomainsCount(route.params.id, trackedDomains.value.length)
   showModal.value.trackedDomain = false
 }
 
@@ -174,7 +172,6 @@ async function deleteTrackedDomain (trackedDomain) {
   }
   await getTimaticApi().$delete('tracked-domains/' + trackedDomain.id)
   trackedDomains.value = trackedDomains.value.filter(item => item.id !== trackedDomain.id)
-  customersStore.updateTrackedDomainsCount(route.params.id, trackedDomains.value.length)
 }
 
 async function deleteCustomer () {

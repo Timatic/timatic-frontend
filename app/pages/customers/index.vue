@@ -29,14 +29,7 @@
                 </div>
               </template>
               <template #table-row="props">
-                <span
-                  v-if="props.column.field === 'trackedDomainsCount' && props.row.trackedDomainsCount === 0"
-                  v-tooltip="{ content: $t('trackedDomains.noneTracked'), trigger: 'hover' }"
-                  class="inline-flex items-center"
-                >
-                  <WarningIcon class="mr-1" /> 0
-                </span>
-                <span v-else-if="props.column.field === 'name'" class="inline-flex items-center">
+                <span v-if="props.column.field === 'name'" class="inline-flex items-center">
                   <span class="inline-block w-3 h-3 rounded-full mr-2" :style="{ backgroundColor: '#' + props.row.color }" />
                   {{ props.row.name }}
                 </span>
@@ -59,7 +52,6 @@
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from '#app'
-import WarningIcon from '~/assets/svg/warning.svg'
 import { useCustomersStore } from '~/stores/customers'
 import { useUsersStore } from '~/stores/users'
 
@@ -76,11 +68,6 @@ const columns = [
     label: t('name'),
     field: 'name',
     filterOptions: { enabled: true }
-  },
-  {
-    label: t('trackedDomains.count'),
-    field: 'trackedDomainsCount',
-    type: 'number'
   }
 ]
 

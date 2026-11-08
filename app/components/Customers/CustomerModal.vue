@@ -60,7 +60,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useCustomersStore } from '~/stores/customers'
+import { useCustomersStore, colors } from '~/stores/customers'
 import { useUsersStore } from '~/stores/users'
 import { useSettingsStore } from '~/stores/settings'
 
@@ -80,7 +80,7 @@ const form = ref({
   name: props.customer.name ?? '',
   hourlyRate: props.customer.hourlyRate ?? '',
   accountManagerUserId: props.customer.accountManagerUserId ?? null,
-  color: props.customer.color ?? '3081b8'
+  color: props.customer.color ?? colors[customersStore.collection.count() % colors.length]
 })
 // The native color input works with #rrggbb, the API with rrggbb
 const color = computed({

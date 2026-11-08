@@ -186,16 +186,11 @@ export default {
   },
   trackedDomains: {
     title: 'Tracked domains',
-    count: 'Tracked domains',
-    noneTracked: 'No domains are tracked for this customer',
     add: 'Add domain',
     domain: 'Domain',
     domainHelp: 'Paste a url if you like: the path is taken from it. Subdomains are covered too, so acme.com also tracks app.acme.com.',
     path: 'Path',
     pathHelp: 'Optional. /projects/TIM only tracks that part of the domain, and wins over a mapping on the whole domain.',
-    budget: 'Budget',
-    budgetHelp: 'Leave empty to book the time as paid per hour.',
-    internal: 'Internal',
     paidPerHour: 'Paid per hour',
     confirmDelete: 'Stop tracking {domain}?'
   },
