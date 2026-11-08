@@ -47,15 +47,17 @@
         >
           {{ $t('entries') }}
         </div>
-        <div
-          class="mx-2 cursor-pointer"
-          :class="{ 'active-menu' : route.path.startsWith('/admin/') }"
-          @click="link('/admin/')"
-        >
-          {{ $t('admin.title') }}
-        </div>
       </div>
       <div class="w-1/4 mb-3 flex justify-end items-center pt-1">
+        <NuxtLink
+          to="/admin/"
+          :title="$t('admin.title')"
+          :aria-label="$t('admin.title')"
+          class="mr-6 hover:text-page-title"
+          :class="route.path.startsWith('/admin/') ? 'text-page-title' : 'text-filter-text'"
+        >
+          <CogIcon />
+        </NuxtLink>
         <VMenu :distance="8" placement="bottom-end">
           <div class="flex items-center cursor-pointer">
             <div class="flex justify-center text-label items-center bg-avatar w-12 h-12 rounded-full mr-3">
@@ -89,6 +91,7 @@
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from '#app'
 import { initials } from '~/utils/filters'
+import CogIcon from '~/assets/svg/cog.svg'
 import { useAuthStore } from '~/stores/auth'
 import { useUsersStore } from '~/stores/users'
 
