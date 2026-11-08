@@ -222,5 +222,6 @@ export default {
   fromMonth: 'From month',
   toMonth: 'To month',
   splitBy: 'Split by',
+  splitByHint: 'Adds a sub-row per selected item inside each group.',
   ticketType: 'Ticket type'
 }

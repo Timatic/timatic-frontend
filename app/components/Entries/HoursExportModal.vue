@@ -22,7 +22,7 @@
         <VeeField v-slot="{errors}" name="toMonth" rules="required" :model-value="parameters.toMonth">
           <vue-select
             v-model="parameters.toMonth"
-            :options="months"
+            :options="toMonths"
             :reduce="month => month.value"
             :clearable="false"
             :select-on-tab="true"
@@ -53,8 +53,11 @@
           :reduce="dimension => dimension.value"
           :placeholder="$t('optional')"
           :select-on-tab="true"
-          class="my-4"
+          class="mt-4 mb-1"
         />
+        <p class="text-sm text-label mb-4">
+          {{ $t('splitByHint') }}
+        </p>
       </div>
       <div class="w-1/2 pl-4">
         <div class="leading-5 font-normal">
@@ -98,7 +101,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import moment from 'moment'
 import { useI18n } from 'vue-i18n'
 import VueSelect from 'vue-select'
@@ -117,7 +120,7 @@ const budgetsStore = useBudgetsStore()
 const customersStore = useCustomersStore()
 const usersStore = useUsersStore()
 
-const months = Array.from({ length: 24 }, (_, i) => {
+const months = Array.from({ length: 60 }, (_, i) => {
   const month = moment().startOf('month').subtract(i, 'months')
   return { value: month.format('YYYY-MM'), label: month.format('MMMM YYYY') }
 })
@@ -132,13 +135,25 @@ const dimensions = [
 const parameters = ref({
   fromMonth: months[1].value,
   toMonth: months[1].value,
-  groupBy: null,
+  groupBy: 'user',
   splitBy: null,
   customer: null,
   budget: null,
   user: null
 })
 const error = ref(null)
+
+// The backend caps the range at 24 months, so the to month never runs past that
+const toMonths = computed(() => months.filter(month =>
+  month.value >= parameters.value.fromMonth &&
+  month.value <= moment(parameters.value.fromMonth).add(23, 'months').format('YYYY-MM')
+))
+
+watch(() => parameters.value.fromMonth, () => {
+  if (!toMonths.value.some(month => month.value === parameters.value.toMonth)) {
+    parameters.value.toMonth = parameters.value.fromMonth
+  }
+})
 
 watch(() => parameters.value.groupBy, (groupBy) => {
   if (parameters.value.splitBy === groupBy) {
