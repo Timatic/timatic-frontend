@@ -181,6 +181,18 @@ export default {
       roles: 'Roles',
       editRoles: 'Edit roles of {name}',
       rolesSaved: 'Roles saved'
+    },
+    roles: {
+      title: 'Roles',
+      name: 'Name',
+      usersCount: 'Users',
+      permissions: 'Permissions',
+      create: 'New role',
+      save: 'Save',
+      delete: 'Delete',
+      confirmDelete: 'Delete the role {name}?',
+      deleteDisabled: 'A role can only be deleted when no user has it',
+      saved: 'Role saved'
     }
   }
 }

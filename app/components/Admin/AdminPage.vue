@@ -27,6 +27,7 @@
 
 <script setup>
 const menu = [
-  { path: '/admin/users/', label: 'admin.users.title' }
+  { path: '/admin/users/', label: 'admin.users.title' },
+  { path: '/admin/roles/', label: 'admin.roles.title' }
 ]
 </script>
