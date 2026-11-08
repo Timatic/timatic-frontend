@@ -51,7 +51,7 @@
                   </div>
                   <div class="px-6 py-2 leading-5">
                     <p v-for="activity in activities" :key="activity.id" class="py-1">
-                      {{ activity.startedAt.format('HH:mm') }} - {{ activity.endedAt.format('HH:mm') }}: {{ activity.events.first()?.title ?? activity.eventTypeName }}
+                      {{ activity.startedAt.format('HH:mm') }} - {{ activity.endedAt.format('HH:mm') }}: {{ activity.events.first()?.title ?? activity.eventTypeNames }}
                     </p>
                   </div>
                 </div>
