@@ -10,6 +10,9 @@
               {{ $t('entries') }}
             </div>
             <div class="w-1/3 flex justify-end">
+              <button v-if="usersStore.canReadEntries" class="border border-input-border py-2 px-5 rounded font-normal h-12 mr-4" @click="showExportModal = true">
+                {{ $t('export') }}
+              </button>
               <month-picker v-if="! queryFilters.dates" :allow-all="true" @update:model-value="setPeriod" />
               <div v-else class="flex">
                 <div class="min-w-min h-12 border border-input-border rounded px-4 flex items-center text-base">
@@ -100,6 +103,7 @@
       @closeModal="showEntryModal=false"
       @entrySaved="setPeriod(month)"
     />
+    <hours-export-modal v-if="showExportModal" @closeModal="showExportModal = false" />
   </div>
 </template>
 
@@ -134,6 +138,7 @@ const entriesTable = ref(null)
 const month = ref(null)
 const entries = ref(collect())
 const showEntryModal = ref(false)
+const showExportModal = ref(false)
 const selectedEntry = ref(null)
 const loadingEntries = ref(false)
 const cancelTokenSource = ref(null)

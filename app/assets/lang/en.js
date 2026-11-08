@@ -170,5 +170,10 @@ export default {
   allowedUsers: 'Allowed users',
   filterBudgetTitleOrChangeNumber: 'Filter budget title or change number',
   everyone: 'Everyone',
-  documentSentByMail: 'You will receive the document by mail'
+  documentSentByMail: 'You will receive the document by mail',
+  hoursExport: 'Hours export',
+  fromMonth: 'From month',
+  toMonth: 'To month',
+  splitBy: 'Split by',
+  ticketType: 'Ticket type'
 }
