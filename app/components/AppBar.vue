@@ -47,6 +47,13 @@
         >
           {{ $t('entries') }}
         </div>
+        <div
+          class="mx-2 cursor-pointer"
+          :class="{ 'active-menu' : route.path.startsWith('/admin/') }"
+          @click="link('/admin/')"
+        >
+          {{ $t('admin.title') }}
+        </div>
       </div>
       <div class="w-1/4 mb-3 flex justify-end items-center pt-1">
         <VMenu :distance="8" placement="bottom-end">

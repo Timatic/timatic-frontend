@@ -170,5 +170,17 @@ export default {
   allowedUsers: 'Allowed users',
   filterBudgetTitleOrChangeNumber: 'Filter budget title or change number',
   everyone: 'Everyone',
-  documentSentByMail: 'You will receive the document by mail'
+  documentSentByMail: 'You will receive the document by mail',
+  admin: {
+    title: 'Admin',
+    users: {
+      title: 'Users',
+      email: 'E-mail',
+      firstName: 'First name',
+      lastName: 'Last name',
+      roles: 'Roles',
+      editRoles: 'Edit roles of {name}',
+      rolesSaved: 'Roles saved'
+    }
+  }
 }
