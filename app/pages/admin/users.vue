@@ -6,7 +6,6 @@
     <vue-good-table
       :columns="columns"
       :rows="rows"
-      :search-options="{ enabled: true }"
       :sort-options="{ enabled: true, initialSortBy: { field: 'email', type: 'asc' } }"
       @row-click="editUser"
     >
@@ -53,13 +52,29 @@ const users = ref([])
 const roles = ref([])
 const selectedUser = ref(null)
 
-const columns = [
-  { label: t('admin.users.email'), field: 'email' },
-  { label: t('admin.users.firstName'), field: 'givenName' },
-  { label: t('admin.users.lastName'), field: 'familyName' },
-  { label: t('admin.users.team'), field: 'teamName' },
-  { label: t('admin.users.roles'), field: 'roleNames', sortable: false }
-]
+const columns = computed(() => [
+  { label: t('admin.users.email'), field: 'email', filterOptions: { enabled: true } },
+  { label: t('admin.users.firstName'), field: 'givenName', filterOptions: { enabled: true } },
+  { label: t('admin.users.lastName'), field: 'familyName', filterOptions: { enabled: true } },
+  {
+    label: t('admin.users.team'),
+    field: 'teamName',
+    filterOptions: {
+      enabled: true,
+      filterDropdownItems: teamsStore.collection.pluck('name').sort().all()
+    }
+  },
+  {
+    label: t('admin.users.roles'),
+    field: 'roleNames',
+    sortable: false,
+    filterOptions: {
+      enabled: true,
+      filterDropdownItems: roles.value.map(role => role.name).sort(),
+      filterFn: (roleNames, roleName) => roleNames.split(' ').includes(roleName)
+    }
+  }
+])
 
 const rows = computed(() => users.value.map(user => ({
   ...user,
