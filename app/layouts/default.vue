@@ -5,12 +5,14 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useAuthStore } from '~/stores/auth'
 import { useUsersStore } from '~/stores/users'
 import { useCustomersStore } from '~/stores/customers'
 import { useBudgetsStore } from '~/stores/budgets'
 import { useBudgetTypesStore } from '~/stores/budgetTypes'
 import { useTeamsStore } from '~/stores/teams'
+import { useSettingsStore } from '~/stores/settings'
 
 const authStore = useAuthStore()
 const usersStore = useUsersStore()
@@ -18,6 +20,7 @@ const customersStore = useCustomersStore()
 const budgetsStore = useBudgetsStore()
 const budgetTypesStore = useBudgetTypesStore()
 const teamsStore = useTeamsStore()
+const settingsStore = useSettingsStore()
 
 if (authStore.isAuthenticated) {
   usersStore.login()
@@ -26,7 +29,18 @@ if (authStore.isAuthenticated) {
   budgetTypesStore.fetch()
   teamsStore.fetch()
   usersStore.fetch()
+  settingsStore.fetch()
 }
+
+// The calendar only accepts a class per event, so every customer color gets one
+useHead({
+  style: [{
+    innerHTML: computed(() => customersStore.collection
+      .pluck('color').unique()
+      .map(color => `.bg-${color} { background-color: #${color} !important; }`)
+      .implode(' '))
+  }]
+})
 </script>
 
 <style>

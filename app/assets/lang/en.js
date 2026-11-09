@@ -171,6 +171,29 @@ export default {
   filterBudgetTitleOrChangeNumber: 'Filter budget title or change number',
   everyone: 'Everyone',
   documentSentByMail: 'You will receive the document by mail',
+  customerForm: {
+    create: 'New customer',
+    edit: 'Edit customer',
+    name: 'Name',
+    hourlyRate: 'Hourly rate',
+    color: 'Color',
+    defaultRate: 'default',
+    defaultRatePlaceholder: 'Default: € {rate}',
+    accountManager: 'Account manager',
+    delete: 'Delete',
+    confirmDelete: 'Delete the customer {name}?',
+    saved: 'Customer saved'
+  },
+  trackedDomains: {
+    title: 'Tracked domains',
+    add: 'Add domain',
+    domain: 'Domain',
+    domainHelp: 'Paste a url if you like: the path is taken from it. Subdomains are covered too, so acme.com also tracks app.acme.com.',
+    path: 'Path',
+    pathHelp: 'Optional. /projects/TIM only tracks that part of the domain, and wins over a mapping on the whole domain.',
+    paidPerHour: 'Paid per hour',
+    confirmDelete: 'Stop tracking {domain}?'
+  },
   admin: {
     title: 'Admin',
     users: {
