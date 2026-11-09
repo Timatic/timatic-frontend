@@ -5,6 +5,7 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useAuthStore } from '~/stores/auth'
 import { useUsersStore } from '~/stores/users'
 import { useCustomersStore } from '~/stores/customers'
@@ -30,6 +31,16 @@ if (authStore.isAuthenticated) {
   usersStore.fetch()
   settingsStore.fetch()
 }
+
+// The calendar only accepts a class per event, so every customer color gets one
+useHead({
+  style: [{
+    innerHTML: computed(() => customersStore.collection
+      .pluck('color').unique()
+      .map(color => `.bg-${color} { background-color: #${color} !important; }`)
+      .implode(' '))
+  }]
+})
 </script>
 
 <style>
