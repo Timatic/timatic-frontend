@@ -4,7 +4,7 @@ import collect from 'collect.js'
 import { getTimaticApi } from '~/utils/timaticApi'
 
 export const colors = [
-  '24a086', '30ac63', '3081b8', '8c48ab', '2e3f51', 'f0c430', 'e47f31', 'e47f31', '96a6a6',
+  '24a086', '30ac63', '3081b8', '8c48ab', '2e3f51', 'f0c430', 'e47f31', '96a6a6',
   '28bc9a', '38cc76', '3b99da', '9b5cb3', '354a5d', 'f19b2e', 'd05518', 'bd3933', 'bcc3c9', '818c8e'
 ]
 
