@@ -28,6 +28,7 @@ if (authStore.isAuthenticated) {
   budgetTypesStore.fetch()
   teamsStore.fetch()
   usersStore.fetch()
+  settingsStore.fetch()
 }
 </script>
 
