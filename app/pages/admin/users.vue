@@ -33,7 +33,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import collect from 'collect.js'
 import { useToast } from 'vue-toast-notification'
@@ -70,7 +70,7 @@ const columns = computed(() => [
     sortable: false,
     filterOptions: {
       enabled: true,
-      filterDropdownItems: roles.value.map(role => role.name).sort(),
+      filterDropdownItems: [...new Set(users.value.flatMap(user => user.roles.map(role => role.name)))].sort(),
       filterFn: (roleNames, roleName) => roleNames.split(' ').includes(roleName)
     }
   }
@@ -83,13 +83,7 @@ const rows = computed(() => users.value.map(user => ({
 })))
 
 onMounted(async () => {
-  const api = getTimaticApi()
-  const [usersResponse, rolesResponse] = await Promise.all([
-    api.$get('users', { params: { include: 'roles,team', page: { size: 1000 } } }),
-    api.$get('roles', { params: { page: { size: 1000 } } })
-  ])
-
-  roles.value = rolesResponse.data.map(role => ({ id: role.id, name: role.attributes.name }))
+  const usersResponse = await getTimaticApi().$get('users', { params: { include: 'roles,team', page: { size: 1000 } } })
   const includedRoles = collect(usersResponse.included).where('type', 'roles')
   users.value = usersResponse.data.map(user => ({
     id: user.id,
@@ -98,6 +92,14 @@ onMounted(async () => {
     roles: user.relationships.roles.data.map(({ id }) => ({ id, name: includedRoles.firstWhere('id', id).attributes.name }))
   }))
 })
+
+// Only admins can read every role; the permissions may still be loading on a direct visit
+watch(() => usersStore.can('roles.read'), async (canReadRoles) => {
+  if (canReadRoles) {
+    const response = await getTimaticApi().$get('roles', { params: { page: { size: 1000 } } })
+    roles.value = response.data.map(role => ({ id: role.id, name: role.attributes.name }))
+  }
+}, { immediate: true })
 
 function editUser ({ row }) {
   if (usersStore.can('users.update')) {
