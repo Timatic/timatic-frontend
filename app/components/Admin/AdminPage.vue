@@ -8,7 +8,7 @@
             {{ $t('admin.title') }}
           </div>
           <NuxtLink
-            v-for="item in menu"
+            v-for="item in visibleMenu"
             :key="item.path"
             :to="item.path"
             class="block py-1 text-filter-text"
@@ -18,7 +18,7 @@
           </NuxtLink>
         </nav>
         <div class="flex-1">
-          <slot />
+          <slot v-if="canSeeCurrentSection" />
         </div>
       </div>
     </div>
@@ -26,8 +26,18 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useRoute } from '#app'
+import { useUsersStore } from '~/stores/users'
+
+const route = useRoute()
+const usersStore = useUsersStore()
+
 const menu = [
   { path: '/admin/users/', label: 'admin.users.title' },
-  { path: '/admin/roles/', label: 'admin.roles.title' }
+  { path: '/admin/roles/', label: 'admin.roles.title', permission: 'roles.update' }
 ]
+
+const visibleMenu = computed(() => menu.filter(item => !item.permission || usersStore.can(item.permission)))
+const canSeeCurrentSection = computed(() => visibleMenu.value.some(item => (route.path + '/').startsWith(item.path)))
 </script>
