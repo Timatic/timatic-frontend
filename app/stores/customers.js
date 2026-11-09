@@ -4,13 +4,13 @@ import collect from 'collect.js'
 import { getTimaticApi } from '~/utils/timaticApi'
 
 export const colors = [
-  '24a086', '30ac63', '3081b8', '8c48ab', '2e3f51', 'f0c430', 'e47f31', 'e47f31', 'ecf0f1', '96a6a6',
+  '24a086', '30ac63', '3081b8', '8c48ab', '2e3f51', 'f0c430', 'e47f31', 'e47f31', '96a6a6',
   '28bc9a', '38cc76', '3b99da', '9b5cb3', '354a5d', 'f19b2e', 'd05518', 'bd3933', 'bcc3c9', '818c8e'
 ]
 
-// A customer without a color of its own keeps the one it always had
+// A customer without a color of its own gets a palette color by id
 function fallbackColor (customer) {
-  return customer.attributes.isOwnOrganization ? '3081b8' : colors[customer.id % 20]
+  return customer.attributes.isOwnOrganization ? '3081b8' : colors[customer.id % colors.length]
 }
 
 function parseCustomer (customer) {
