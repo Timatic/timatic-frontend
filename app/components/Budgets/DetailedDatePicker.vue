@@ -63,7 +63,7 @@ const props = defineProps({
 defineEmits(['pickedPeriod'])
 
 const visibleCount = 5
-const hoursFormat = minutes => (minutes / 60).toLocaleString('nl-NL', { maximumFractionDigits: 1 })
+const hoursFormat = minutes => (minutes / 60).toLocaleString('nl-NL', { maximumFractionDigits: 1 }) + 'h'
 const x = ref(null)
 
 const blockPrevious = computed(() => x.value <= 0)
