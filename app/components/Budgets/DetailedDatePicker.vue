@@ -9,9 +9,9 @@
         <ArrowLeft :class="{ 'text-action-button':!blockPrevious }" />
       </div>
       <div class="flex justify-between items-center w-full">
-        <template v-for="period in periods.slice(x,4)" :key="period.id">
+        <template v-for="period in periods.slice(x, visibleCount)" :key="period.id">
           <div
-            class="w-1/4 custom-shadow mx-2 rounded text-center py-4 cursor-pointer bg-white relative z-10"
+            class="w-1/5 custom-shadow mx-2 rounded text-center py-4 cursor-pointer bg-white relative z-10"
             :class="{ 'active-date' : activePeriod === period }"
             @click="$emit('pickedPeriod', period);"
           >
@@ -19,11 +19,9 @@
               {{ period.title }}
             </div>
             <div class="">
-              {{ $t('remainingBudget') }}: <span
-                :class="{'text-warning' : period.remainingMinutes < 60 }"
-              >{{
-                timeFormat(period.remainingMinutes)
-              }}</span>
+              <span :class="{'text-warning' : period.remainingMinutes < 60 }">
+                {{ hoursFormat(period.initialMinutes - period.remainingMinutes) }}
+              </span> / {{ hoursFormat(period.initialMinutes) }}
             </div>
             <div class="">
               Tickets: {{ period.ticketCount }}
@@ -46,7 +44,6 @@
 import { ref, computed, onMounted } from 'vue'
 import ArrowLeft from '~/assets/svg/arrow-left.svg'
 import ArrowRight from '~/assets/svg/arrow-right.svg'
-import { timeFormat } from '~/utils/filters'
 
 const props = defineProps({
   activePeriod: {
@@ -65,13 +62,15 @@ const props = defineProps({
 
 defineEmits(['pickedPeriod'])
 
+const visibleCount = 5
+const hoursFormat = minutes => (minutes / 60).toLocaleString('nl-NL', { maximumFractionDigits: 1 })
 const x = ref(null)
 
 const blockPrevious = computed(() => x.value <= 0)
-const blockNext = computed(() => x.value >= props.periods.count() - 4)
+const blockNext = computed(() => x.value >= props.periods.count() - visibleCount)
 
 onMounted(() => {
-  x.value = props.periods.count() - 4
+  x.value = props.periods.count() - visibleCount
   if (x.value < 0) {
     x.value = 0
   }
@@ -98,7 +97,7 @@ onMounted(() => {
   height: 8px;
   position: absolute;
   top: 101px;
-  left: 148px;
+  left: calc(50% - 4px);
   transform: rotate(45deg);
   @apply border border-action-button border-t-0 border-l-0 bg-white;
   z-index: -1;
