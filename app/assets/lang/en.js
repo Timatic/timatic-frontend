@@ -224,6 +224,5 @@ export default {
   filter: 'Filter',
   grouping: 'Grouping',
   splitBy: 'Split by',
-  splitByHint: 'Adds a sub-row per selected item inside each group.',
-  ticketType: 'Ticket type'
+  splitByHint: 'Adds a sub-row per selected item inside each group.'
 }

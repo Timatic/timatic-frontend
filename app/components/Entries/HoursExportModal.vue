@@ -149,7 +149,7 @@ const dimensions = [
   { value: 'user', label: t('user') },
   { value: 'budget', label: t('budget') },
   { value: 'customer', label: t('customer') },
-  { value: 'ticketType', label: t('ticketType') }
+  { value: 'ticket', label: t('ticket') }
 ]
 
 const parameters = ref({
