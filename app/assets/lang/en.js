@@ -107,6 +107,7 @@ export default {
   teamOverview: 'Team overview',
   approveDaysWarning: 'You have {days} days left to approve overtime.',
   total: 'Total',
+  spent: 'Spent',
   deleteSuggestion: 'Delete suggestion',
   deleteEntry: 'Delete entry',
   communication: 'Customer communication',

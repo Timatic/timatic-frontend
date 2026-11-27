@@ -18,13 +18,17 @@
             <div class="text-action-button">
               {{ period.title }}
             </div>
-            <div class="">
-              <span :class="{'text-warning' : period.remainingMinutes < 60 }">
-                {{ hoursFormat(period.initialMinutes - period.remainingMinutes) }}
-              </span> / {{ hoursFormat(period.initialMinutes) }}
-            </div>
-            <div class="">
-              Tickets: {{ period.ticketCount }}
+            <div class="grid grid-cols-2 mt-2">
+              <div class="border-r">
+                <div class="text-filter-text">{{ $t('spent') }}</div>
+                <div :class="{'text-warning' : period.remainingMinutes < 60 }">
+                  {{ hoursFormat(period.initialMinutes - period.remainingMinutes) }}
+                </div>
+              </div>
+              <div>
+                <div class="text-filter-text">{{ $t('total') }}</div>
+                <div>{{ hoursFormat(period.initialMinutes) }}</div>
+              </div>
             </div>
           </div>
         </template>
@@ -84,7 +88,7 @@ onMounted(() => {
 </style>
 <style scoped>
 .date-arrow {
-  height: 104px;
+  height: 112px;
 }
 
 .active-date {
@@ -96,7 +100,7 @@ onMounted(() => {
   width: 8px;
   height: 8px;
   position: absolute;
-  top: 101px;
+  top: calc(100% - 3px);
   left: calc(50% - 4px);
   transform: rotate(45deg);
   @apply border border-action-button border-t-0 border-l-0 bg-white;
