@@ -218,5 +218,12 @@ export default {
       deleteDisabled: 'A role can only be deleted when no user has it',
       saved: 'Role saved'
     }
-  }
+  },
+  hoursExport: 'Hours export',
+  fromMonth: 'From month',
+  toMonth: 'To month',
+  filter: 'Filter',
+  grouping: 'Grouping',
+  splitBy: 'Split by',
+  splitByHint: 'Adds a sub-row per selected item inside each group.'
 }

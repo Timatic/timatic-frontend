@@ -22,6 +22,7 @@ export const useUsersStore = defineStore('users', () => {
   const canEditEntriesFromOthers = computed(() => currentUser.value.permissions.contains('entries.update_from_others'))
   const canCreateEntriesForOthers = computed(() => currentUser.value.permissions.contains('entries.create_for_others'))
   const can = computed(() => (permission) => currentUser.value.permissions.contains(permission))
+  const canReadEntries = computed(() => currentUser.value.permissions.contains('entries.read'))
   const collection = computed(() => users.value.map((user) => {
     user.fullName = user.givenName + ' ' + user.familyName
     return user
@@ -85,6 +86,7 @@ export const useUsersStore = defineStore('users', () => {
     canEditEntriesFromOthers,
     canCreateEntriesForOthers,
     can,
+    canReadEntries,
     collection,
     login,
     fetch
