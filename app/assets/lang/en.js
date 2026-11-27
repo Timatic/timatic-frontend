@@ -221,6 +221,8 @@ export default {
   hoursExport: 'Hours export',
   fromMonth: 'From month',
   toMonth: 'To month',
+  filter: 'Filter',
+  grouping: 'Grouping',
   splitBy: 'Split by',
   splitByHint: 'Adds a sub-row per selected item inside each group.',
   ticketType: 'Ticket type'

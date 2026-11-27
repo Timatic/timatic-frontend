@@ -1,100 +1,120 @@
 <template>
   <base-modal :title="$t('hoursExport')" width="w-11/12" :api-error="error" @closeModal="closeModal" @submitModal="submit">
     <template #content>
-      <div class="w-1/2 pr-4">
-        <div class="leading-5 font-normal">
-          {{ $t('fromMonth') }}*
-        </div>
-        <VeeField v-slot="{errors}" name="fromMonth" rules="required" :model-value="parameters.fromMonth">
-          <vue-select
-            v-model="parameters.fromMonth"
-            :options="months"
-            :reduce="month => month.value"
-            :clearable="false"
-            :select-on-tab="true"
-            class="my-4"
-            :class="errors.length > 0 ? 'invalid' : ''"
-          />
-        </VeeField>
-        <div class="leading-5 font-normal">
-          {{ $t('toMonth') }}*
-        </div>
-        <VeeField v-slot="{errors}" name="toMonth" rules="required" :model-value="parameters.toMonth">
-          <vue-select
-            v-model="parameters.toMonth"
-            :options="toMonths"
-            :reduce="month => month.value"
-            :clearable="false"
-            :select-on-tab="true"
-            class="my-4"
-            :class="errors.length > 0 ? 'invalid' : ''"
-          />
-        </VeeField>
-        <div class="leading-5 font-normal">
-          {{ $t('groupBy') }}*
-        </div>
-        <VeeField v-slot="{errors}" name="groupBy" rules="required" :model-value="parameters.groupBy">
-          <vue-select
-            v-model="parameters.groupBy"
-            :options="dimensions"
-            :reduce="dimension => dimension.value"
-            :clearable="false"
-            :select-on-tab="true"
-            class="my-4"
-            :class="errors.length > 0 ? 'invalid' : ''"
-          />
-        </VeeField>
-        <div class="leading-5 font-normal">
-          {{ $t('splitBy') }}
-        </div>
-        <vue-select
-          v-model="parameters.splitBy"
-          :options="dimensions.filter(dimension => dimension.value !== parameters.groupBy)"
-          :reduce="dimension => dimension.value"
-          :placeholder="$t('optional')"
-          :select-on-tab="true"
-          class="mt-4 mb-1"
-        />
-        <p class="text-sm text-label mb-4">
-          {{ $t('splitByHint') }}
-        </p>
-      </div>
-      <div class="w-1/2 pl-4">
-        <div class="leading-5 font-normal">
-          {{ $t('customer') }}
-        </div>
-        <vue-select
-          v-model="parameters.customer"
-          :options="customersStore.collection.sortBy('name').all()"
-          label="name"
-          :placeholder="$t('optional')"
-          :select-on-tab="true"
-          class="my-4"
-        />
-        <template v-if="parameters.customer">
-          <div class="leading-5 font-normal">
-            {{ $t('budget') }}
+      <div class="w-full">
+        <h3 class="font-medium text-lg mb-2">
+          {{ $t('filter') }}
+        </h3>
+        <div class="grid grid-cols-2 gap-x-8">
+          <div>
+            <div class="leading-5 font-normal">
+              {{ $t('fromMonth') }}*
+            </div>
+            <VeeField v-slot="{errors}" name="fromMonth" rules="required" :model-value="parameters.fromMonth">
+              <vue-select
+                v-model="parameters.fromMonth"
+                :options="months"
+                :reduce="month => month.value"
+                :clearable="false"
+                :select-on-tab="true"
+                class="my-4"
+                :class="errors.length > 0 ? 'invalid' : ''"
+              />
+            </VeeField>
           </div>
-          <vue-select
-            v-model="parameters.budget"
-            :options="budgetsStore.collection.where('customerId', parameters.customer.id).sortBy('title').all()"
-            label="title"
-            :placeholder="$t('optional')"
-            :select-on-tab="true"
-            class="my-4"
-          />
-        </template>
-        <div class="leading-5 font-normal">
-          {{ $t('user') }}
+          <div>
+            <div class="leading-5 font-normal">
+              {{ $t('toMonth') }}*
+            </div>
+            <VeeField v-slot="{errors}" name="toMonth" rules="required" :model-value="parameters.toMonth">
+              <vue-select
+                v-model="parameters.toMonth"
+                :options="toMonths"
+                :reduce="month => month.value"
+                :clearable="false"
+                :select-on-tab="true"
+                class="my-4"
+                :class="errors.length > 0 ? 'invalid' : ''"
+              />
+            </VeeField>
+          </div>
+          <div>
+            <div class="leading-5 font-normal">
+              {{ $t('customer') }}
+            </div>
+            <vue-select
+              v-model="parameters.customer"
+              :options="customersStore.collection.sortBy('name').all()"
+              label="name"
+              :placeholder="$t('optional')"
+              :select-on-tab="true"
+              class="my-4"
+            />
+          </div>
+          <div v-if="parameters.customer">
+            <div class="leading-5 font-normal">
+              {{ $t('budget') }}
+            </div>
+            <vue-select
+              v-model="parameters.budget"
+              :options="budgetsStore.collection.where('customerId', parameters.customer.id).sortBy('title').all()"
+              label="title"
+              :placeholder="$t('optional')"
+              :select-on-tab="true"
+              class="my-4"
+            />
+          </div>
+          <div>
+            <div class="leading-5 font-normal">
+              {{ $t('user') }}
+            </div>
+            <vue-select
+              v-model="parameters.user"
+              :options="usersStore.collection.sortBy('fullName').all()"
+              label="fullName"
+              :placeholder="$t('optional')"
+              :select-on-tab="true"
+              class="my-4"
+            />
+          </div>
         </div>
-        <vue-select
-          v-model="parameters.user"
-          :options="usersStore.collection.sortBy('fullName').all()"
-          label="fullName"
-          :placeholder="$t('optional')"
-          :select-on-tab="true"
-          class="my-4"
-        />
+        <h3 class="font-medium text-lg mt-4 mb-2 pt-4 border-t border-input-border">
+          {{ $t('grouping') }}
+        </h3>
+        <div class="grid grid-cols-2 gap-x-8">
+          <div>
+            <div class="leading-5 font-normal">
+              {{ $t('groupBy') }}*
+            </div>
+            <VeeField v-slot="{errors}" name="groupBy" rules="required" :model-value="parameters.groupBy">
+              <vue-select
+                v-model="parameters.groupBy"
+                :options="dimensions"
+                :reduce="dimension => dimension.value"
+                :clearable="false"
+                :select-on-tab="true"
+                class="my-4"
+                :class="errors.length > 0 ? 'invalid' : ''"
+              />
+            </VeeField>
+          </div>
+          <div>
+            <div class="leading-5 font-normal">
+              {{ $t('splitBy') }}
+            </div>
+            <vue-select
+              v-model="parameters.splitBy"
+              :options="dimensions.filter(dimension => dimension.value !== parameters.groupBy)"
+              :reduce="dimension => dimension.value"
+              :placeholder="$t('optional')"
+              :select-on-tab="true"
+              class="mt-4 mb-1"
+            />
+            <p class="text-sm text-label mb-4">
+              {{ $t('splitByHint') }}
+            </p>
+          </div>
+        </div>
       </div>
     </template>
   </base-modal>
